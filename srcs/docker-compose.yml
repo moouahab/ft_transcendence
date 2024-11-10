@@ -1,0 +1,23 @@
+version: '3.8'
+
+services:
+  postgredb:
+    build:
+      context: ./requirements/PostgreSQL  # Dockerfile PostgreSQL personnalisé avec Alpine
+    env_file:
+      - .env  # Utilisation du fichier .env pour les variables non sensibles
+    environment:
+      POSTGRES_PASSWORD_FILE: /run/secrets/postgres_password  # Utilisation du secret pour le mot de passe
+    secrets:
+      - postgres_password  # Utilisation du secret pour le mot de passe
+    ports:
+      - "5432:5432"
+    networks:
+      - transcendence 
+
+secrets:
+  postgres_password:
+    file: ../secret/postgres_password # Emplacement du fichier de secret
+
+networks:
+  transcendence:
