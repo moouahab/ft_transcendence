@@ -1,4 +1,4 @@
-# Utiliser une version fixe de Nginx
+ 
 FROM nginx:1.21.4
 
 # Installer les dépendances nécessaires pour ModSecurity
