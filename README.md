@@ -122,7 +122,7 @@ class UserTrans(AbstractUser):
 ```
 ### Sérialiseur
 
-##### Fichier : users/serializers.py
+Fichier : users/serializers.py
 ```py
 from rest_framework import serializers
 from .models import UserTrans
@@ -138,7 +138,7 @@ class UserSerializer(serializers.ModelSerializer):
 ### Vues
 1. Vue UserListCreateView
 
-##### Fichier : users/views.py
+Fichier : users/views.py
 ```py
 from rest_framework.views import APIView
 from rest_framework.response import Response
@@ -163,7 +163,7 @@ class UserListCreateView(APIView):
 ```
 2. Vue UserDetailView
 
-#### Fichier : users/views.py
+Fichier : users/views.py
 ```py
 from rest_framework.generics import RetrieveAPIView
 
