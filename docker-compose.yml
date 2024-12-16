@@ -1,0 +1,44 @@
+version: '3.8'
+
+services:
+  mod:
+    build:
+      context: nginx/
+      dockerfile: Dockerfile
+    image: mod:latest
+    container_name: mod
+    depends_on:
+      - backend
+      - vault
+    ports:
+      - "80:80"
+      - "443:443"
+    environment:
+      VAULT_ADDR: "http://vault:8200"
+    networks:
+      - app-network
+
+  backend:
+    image: crccheck/hello-world
+    container_name: backend
+    ports:
+      - "8000:8000"
+    networks:
+      - app-network
+
+  vault:
+    build:
+      context: vault/
+      dockerfile: Dockerfile
+    container_name: vault
+    ports:
+      - "8200:8200"  # Mappe le port 8200 du container sur 8201 de l'hôte
+    volumes:
+      - ./vault/config:/vault/config
+      - ./vault/data:/vault/data
+    networks:
+      - app-network
+
+networks:
+  app-network:
+    driver: bridge
