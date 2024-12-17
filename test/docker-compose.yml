@@ -18,19 +18,6 @@ services:
       - app-network
     command: ["server", "-dev", "-dev-root-token-id=root"]
 
-  vault-init:
-    build:
-      context: ./vault-init
-      dockerfile: Dockerfile
-    container_name: vault-init
-    depends_on:
-      - vault
-    networks:
-      - app-network
-    environment:
-      VAULT_ADDR: "http://vault:8200"
-      VAULT_TOKEN: "root"
-
   backend:
     image: crccheck/hello-world
     container_name: backend
@@ -47,7 +34,7 @@ services:
     container_name: mod
     depends_on:
       - backend
-      - vault-init
+      - vault
     ports:
       - "80:80"
       - "443:443"
