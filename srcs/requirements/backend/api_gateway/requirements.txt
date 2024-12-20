@@ -1,0 +1,10 @@
+Django>=3.2
+psycopg2-binary
+python-decouple
+bcrypt
+djangorestframework
+drf-yasg
+Pillow
+whitenoise
+requests
+
