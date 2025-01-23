@@ -1,0 +1,112 @@
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+  <meta charset="UTF-8">
+  <title>Test Login</title>
+  <style>
+    body {
+      font-family: Arial, sans-serif;
+      margin: 2rem;
+      background-color: #f4f4f4;
+    }
+    .container {
+      background: #fff;
+      padding: 2rem;
+      max-width: 400px;
+      margin: 0 auto;
+      border-radius: 5px;
+      box-shadow: 0 0 10px rgba(0,0,0,0.1);
+    }
+    h1 {
+      text-align: center;
+    }
+    form label {
+      display: block;
+      margin-top: 1rem;
+    }
+    form input {
+      width: 100%;
+      padding: 0.5rem;
+      margin-top: 0.3rem;
+      border: 1px solid #ccc;
+      border-radius: 3px;
+    }
+    form button {
+      width: 100%;
+      padding: 0.7rem;
+      margin-top: 1rem;
+      background-color: #007BFF;
+      border: none;
+      border-radius: 3px;
+      color: #fff;
+      font-size: 1rem;
+      cursor: pointer;
+    }
+    form button:hover {
+      background-color: #0056b3;
+    }
+    .message {
+      margin-top: 1rem;
+      text-align: center;
+      font-size: 0.9rem;
+      color: red;
+    }
+  </style>
+</head>
+<body>
+  <a href="./signup.html">Inscription</a>
+  <div class="container">
+    <h1>Login Test</h1>
+    <form id="login-form">
+      <!-- Pas besoin de mettre l'attribut action et method si on utilise fetch -->
+      <label for="email">Nom d'utilisateur (Email) :</label>
+      <input type="email" id="email" name="email" required>
+
+      <label for="password">Mot de passe :</label>
+      <input type="password" id="password" name="password" required>
+
+      <button type="submit">Se connecter</button>
+    </form>
+    <div id="response" class="message"></div>
+  </div>
+
+  <script>
+        const form = document.getElementById('login-form');
+        const responseDiv = document.getElementById('response');
+      
+        form.addEventListener('submit', function(e) {
+          e.preventDefault();
+      
+          // Récupère les données des champs de formulaire
+          const email = document.getElementById('email').value;
+          const password = document.getElementById('password').value;
+          const data = { email, password };
+      
+          fetch('http://localhost:8000/login/api/', {
+            method: 'POST',
+            headers: {
+              'Content-Type': 'application/json',
+              'Accept': 'application/json'
+            },
+            credentials: 'include',  // pour inclure les cookies dans la requête
+            body: JSON.stringify(data)
+          })
+          .then(response => response.text())
+          .then(text => {
+            console.log("Réponse brute :", text);
+            try {
+              const jsonData = JSON.parse(text);
+              responseDiv.innerText = JSON.stringify(jsonData, null, 2);
+            } catch (error) {
+              responseDiv.innerText = "Erreur de parsing JSON: " + error.message + "\nRéponse brute: " + text;
+            }
+          })
+          .catch(error => {
+            responseDiv.innerText = 'Erreur lors de l\'envoi : ' + error;
+          });
+        });
+      </script>
+      
+  </script>
+</body>
+</html>

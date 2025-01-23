@@ -1,0 +1,19 @@
+POST http://127.0.0.1:8000/api/signup/
+Content-Type: application/json
+
+{
+    "email": "mohamed.ouahab199@gmail.com",
+    "username": "amin",
+    "password": "password123"
+}
+
+###
+POST http://localhost:8000/login/api/
+
+Content-Type: application/json
+
+{
+    "email": "amin.ouahaab@gmail.com",
+    "password": "root_0123456"
+}
+####
