@@ -1,5 +1,6 @@
 import random
 import requests
+import os
 from django.conf import settings
 from django.utils import timezone
 from django.core.mail import send_mail
@@ -33,8 +34,8 @@ def verify_email(email):
     """
     Vérifie l'existence réelle d'un email via l'API Abstract Email Validation.
     """
-    api_url = "https://emailvalidation.abstractapi.com/v1/"
-    api_key = "cbf5ddecec564695a7449eb08b611809"
+    api_url = os.getenv('URL_API_EMAIL')
+    api_key = os.getenv('API_KEY_EMAIL')
     params = {
         "api_key": api_key,
         "email": email

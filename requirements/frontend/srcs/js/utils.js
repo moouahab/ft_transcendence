@@ -4,7 +4,8 @@ export async function fetchTemplate(path) {
     if (!response.ok) {
         throw new Error(`Erreur : impossible de charger le fichier ${path}`);
     }
-    return await response.text();
+    else
+        return await response.text();
 }
 
 
@@ -15,3 +16,23 @@ export function showLoader() {
 export function hideLoader() {
     document.getElementById("loader").style.display = "none";
 }
+
+
+export async function isUserAuthenticated() {
+    try {
+      const response = await fetch("https://localhost/api/api/check-token/", {
+        method: "GET",
+        credentials: "include", // Inclure les cookies pour vérifier le token
+      });
+  
+      if (response.ok) {
+        return true; // Utilisateur connecté
+      } else {
+        return false; // Utilisateur non connecté
+      }
+    } catch (error) {
+      console.error("Erreur lors de la vérification du token :", error);
+      return false;
+    }
+  }
+  

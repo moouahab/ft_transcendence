@@ -101,3 +101,8 @@ header a:hover {
 .navbar-custom a {
   color: #e6f1ff;
 }
+
+a {
+
+   text-decoration: none;
+}
