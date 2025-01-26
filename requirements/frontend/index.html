@@ -1,112 +1,68 @@
 <!DOCTYPE html>
 <html lang="fr">
-<head>
-  <meta charset="UTF-8">
-  <title>Test Login</title>
-  <style>
-    body {
-      font-family: Arial, sans-serif;
-      margin: 2rem;
-      background-color: #f4f4f4;
-    }
-    .container {
-      background: #fff;
-      padding: 2rem;
-      max-width: 400px;
-      margin: 0 auto;
-      border-radius: 5px;
-      box-shadow: 0 0 10px rgba(0,0,0,0.1);
-    }
-    h1 {
-      text-align: center;
-    }
-    form label {
-      display: block;
-      margin-top: 1rem;
-    }
-    form input {
-      width: 100%;
-      padding: 0.5rem;
-      margin-top: 0.3rem;
-      border: 1px solid #ccc;
-      border-radius: 3px;
-    }
-    form button {
-      width: 100%;
-      padding: 0.7rem;
-      margin-top: 1rem;
-      background-color: #007BFF;
-      border: none;
-      border-radius: 3px;
-      color: #fff;
-      font-size: 1rem;
-      cursor: pointer;
-    }
-    form button:hover {
-      background-color: #0056b3;
-    }
-    .message {
-      margin-top: 1rem;
-      text-align: center;
-      font-size: 0.9rem;
-      color: red;
-    }
-  </style>
-</head>
-<body>
-  <a href="./signup.html">Inscription</a>
-  <div class="container">
-    <h1>Login Test</h1>
-    <form id="login-form">
-      <!-- Pas besoin de mettre l'attribut action et method si on utilise fetch -->
-      <label for="email">Nom d'utilisateur (Email) :</label>
-      <input type="email" id="email" name="email" required>
+  <head>
+    <meta charset="UTF-8">
+    <meta name="language" content="fr">
+    <meta name="robots" content="index, follow">
+    <meta name="author" content="Team Transcendence">
+    <meta name="keywords" content="pong, jeu, final, 42, ecole 42">
+    <meta name="description" content="un jeux en ligne de pong, projet final du tronc commun de l'ecole 42">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/css/bootstrap.min.css" rel="stylesheet" integrity="sha384-QWTKZyjpPEjISv5WaRU9OFeRpok6YctnYmDr5pNlyT2bRjXh0JMhjY6hW+ALEwIH" crossorigin="anonymous">
+    <link rel="stylesheet" href="srcs/css/general.css">
 
-      <label for="password">Mot de passe :</label>
-      <input type="password" id="password" name="password" required>
+    <link rel="stylesheet" href="srcs/css/fromSignup.css">
 
-      <button type="submit">Se connecter</button>
-    </form>
-    <div id="response" class="message"></div>
-  </div>
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Share+Tech+Mono&display=swap" rel="stylesheet">
+    <title>Transcendence</title>
+  </head>
+  <body>
+    <header>
+      <nav class="navbar navbar-expand-lg navbar-custom" aria-label="Offcanvas navbar large">
+        <div class="container-fluid">
+            <a class="navbar-brand" href="/"><h1>Transcendence</h1></a>
+            <button class="navbar-toggler" type="button" data-bs-toggle="offcanvas" data-bs-target="#offcanvasNavbar2" aria-controls="offcanvasNavbar2" aria-label="Toggle navigation">
+                <span class="navbar-toggler-icon"></span>
+            </button>
+          
+            <div class="offcanvas offcanvas-end offcanvas-custom" tabindex="-1" id="offcanvasNavbar2" aria-labelledby="offcanvasNavbar2Label">
+                <div class="offcanvas-header">
+                    <h5 class="offcanvas-title" id="offcanvasNavbar2Label">Menu</h5>
+                    <button type="button" class="btn-close btn-close-white" data-bs-dismiss="offcanvas" aria-label="Close"></button>
+                </div>
 
-  <script>
-        const form = document.getElementById('login-form');
-        const responseDiv = document.getElementById('response');
+                <div class="offcanvas-body">
+                    <ul class="navbar-nav justify-content-end flex-grow-1 pe-3">
+                        <a class="nav-link" href="/">Home</a>
+                            <li class="nav-item">
+                                <a class="nav-link" href="#signup">Inscription</a>
+                            </li>
+                            <li class="nav-item">
+                                <a class="nav-link" href="#connect">Connexion</a>
+                            </li>
+                            <li class="nav-item"></li>
+                        
+                        <!-- Ajoutez d'autres items si nécessaire -->
+                    </ul>
+                </div>
+            </div>
+        </div>
       
-        form.addEventListener('submit', function(e) {
-          e.preventDefault();
-      
-          // Récupère les données des champs de formulaire
-          const email = document.getElementById('email').value;
-          const password = document.getElementById('password').value;
-          const data = { email, password };
-      
-          fetch('https://localhost/api/api/login/', {
-            method: 'POST',
-            headers: {
-              'Content-Type': 'application/json',
-              'Accept': 'application/json'
-            },
-            credentials: 'include',  // pour inclure les cookies dans la requête
-            body: JSON.stringify(data)
-          })
-          .then(response => response.text())
-          .then(text => {
-            console.log("Réponse brute :", text);
-            try {
-              const jsonData = JSON.parse(text);
-              responseDiv.innerText = JSON.stringify(jsonData, null, 2);
-            } catch (error) {
-              responseDiv.innerText = "Erreur de parsing JSON: " + error.message + "\nRéponse brute: " + text;
-            }
-          })
-          .catch(error => {
-            responseDiv.innerText = 'Erreur lors de l\'envoi : ' + error;
-          });
-        });
-      </script>
-      
-  </script>
-</body>
+    </nav>
+  </header>
+    <div id="loader" style="display: none;">
+        <div class="spinner-border" role="status">
+          <span class="sr-only">Loading...</span>
+        </div>
+    </div>
+    <div id="app">
+
+    </div>
+
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/js/bootstrap.bundle.min.js" integrity="sha384-YvpcrYf0tY3lHB60NNkmXc5s9fDVZLESaAA55NDzOxhy9GkcIdslK1eN7N6jIeHz" crossorigin="anonymous"></script>
+    <script src="srcs/js/main.js" type="module"></script>
+  </body>
 </html>

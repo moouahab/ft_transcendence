@@ -188,7 +188,8 @@ SESSION_COOKIE_HTTPONLY = True
 SESSION_COOKIE_SECURE = True  # Nécessite HTTPS
 
 CORS_ALLOWED_ORIGINS = [
-    "http://127.0.0.1:5500",
+    "https://127.0.0.1",
+    "https://localhost",
 ]
 
 CORS_ALLOW_CREDENTIALS = True

@@ -1,19 +1,16 @@
-# loginApp/views.py
-
 from django.contrib.auth import authenticate
 from rest_framework.views import APIView
 from rest_framework.response import Response
 from rest_framework import status
 from rest_framework.permissions import AllowAny
-from rest_framework_simplejwt.tokens import RefreshToken
 from django.conf import settings
-from signupApp.utils import generate_tokens_for_user, validate_access_token, generate_otp_for_user
+from signupApp.utils import generate_tokens_for_user, generate_otp_for_user
 from signupApp.utils import send_otp_email
 from rest_framework.parsers import JSONParser
 
 class LoginView(APIView):
     permission_classes = [AllowAny]
-    parser_classes = [JSONParser]  # Force le parser JSON
+    parser_classes = [JSONParser]
 
     def post(self, request, *args, **kwargs):
         email = request.data.get("email")
