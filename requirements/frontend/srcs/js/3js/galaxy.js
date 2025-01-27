@@ -5,7 +5,7 @@ export default function setupGalaxyView() {
   const app = document.getElementById("app");
   app.innerHTML = `<div id="overlay">
                     <h1 id="overlay-text">Transcendence</h1>
-                    <a href="/#connect" class="cancel-btn">Démarrer</a>
+                    <a href="/#dashboard" class="cancel-btn">Démarrer</a>
                   </div>`; // Nettoyer le contenu précédent
 
   // Configuration de la scène

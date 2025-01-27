@@ -8,20 +8,31 @@ import setupGalaxyView from "./3js/galaxy.js";
 const app = document.getElementById("app");
 
 const routes = {
-  home: async () => {
-    app.innerHTML = await fetchTemplate("./srcs/templates/home.html");
-    setupGalaxyView();
+  public: {
+    connect: async () => {
+      app.innerHTML = await fetchTemplate("./srcs/templates/connect.html");
+      ConnectView();
+    },
+    signup: async () => {
+      app.innerHTML = await fetchTemplate("./srcs/templates/signup.html");
+      setupSignupView();
+    },
+    home: async () => {
+      setupGalaxyView();
+    }
   },
-  connect: async () => {
-    app.innerHTML = await fetchTemplate("./srcs/templates/connect.html");
-    ConnectView(); // Appelle la logique spécifique
+  protected: {
+    dashboard: async () => {
+      app.innerHTML = await fetchTemplate("./srcs/templates/dashboard.html");
+    },
   },
-  signup: async () => {
-    app.innerHTML = await fetchTemplate("./srcs/templates/signup.html");
-    setupSignupView();
+  notFound: async () => {
+    app.innerHTML = `<h1>404 - Page non trouvée</h1>`;
   },
-  notFound: () => "<h1>404 - Page non trouvée</h1>",
 };
+
+export default routes;
+
 
 async function loadView(view) {
   showLoader();
@@ -29,22 +40,27 @@ async function loadView(view) {
   try {
     const isAuthenticated = await isUserAuthenticated();
 
-    // Rediriger un utilisateur connecté qui essaie d'accéder à `#connect` ou `#signup`
-    if (isAuthenticated && (view === "connect" || view === "signup")) {
-      alert("Vous êtes déjà connecté !");
-      window.location.hash = "#home";
+    // Routes publiques accessibles à tous
+    if (routes.public[view]) {
+      if (isAuthenticated && (view === "connect" || view === "signup")) {
+        alert("Vous êtes déjà connecté !");
+        window.location.hash = "#home";
+        return;
+      }
+      await routes.public[view](); // Charger la route publique
       return;
     }
-
-    // Rediriger un utilisateur non connecté qui essaie d'accéder à `#home` ou `#galaxy`
-    if (!isAuthenticated && (view === "home" || view === "galaxy")) {
-      alert("Vous devez être connecté pour accéder à cette page !");
-      window.location.hash = "#connect";
+    if (routes.protected[view]) {
+      if (!isAuthenticated) {
+        alert("Vous devez être connecté pour accéder à cette page !");
+        window.location.hash = "#connect";
+        return;
+      }
+      await routes.protected[view](); // Charger la route protégée
       return;
     }
-    // Charger la vue si aucune redirection
-    const content = routes[view] ? await routes[view]() : routes["notFound"]();
-
+    // Route non trouvée
+    await routes.notFound();
   } catch (error) {
     console.error("Erreur lors du chargement de la vue :", error);
     app.innerHTML = `<h1>Erreur de chargement</h1>`;
@@ -52,6 +68,7 @@ async function loadView(view) {
     hideLoader();
   }
 }
+
 
 
 window.addEventListener("hashchange", () => {
