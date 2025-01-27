@@ -6,28 +6,29 @@ export default function setupGalaxyView() {
   app.innerHTML = `<div id="overlay">
                     <h1 id="overlay-text">Transcendence</h1>
                     <a href="/#dashboard" class="cancel-btn">Démarrer</a>
-                  </div>`; // Nettoyer le contenu précédent
+                  </div>`;
 
   // Configuration de la scène
   const scene = new THREE.Scene();
   const camera = new THREE.PerspectiveCamera(75, window.innerWidth / window.innerHeight, 0.1, 1000);
   const renderer = new THREE.WebGLRenderer({ antialias: true });
+  renderer.setPixelRatio(window.devicePixelRatio);
   renderer.setSize(window.innerWidth, window.innerHeight);
   app.appendChild(renderer.domElement);
 
   // Lumières néon bleues
-  const neonLight1 = new THREE.PointLight(0x00aaff, 1.5, 50); // Bleu clair
+  const neonLight1 = new THREE.PointLight(0x00aaff, 1.5, 50);
   neonLight1.position.set(5, 5, 5);
-  const neonLight2 = new THREE.PointLight(0x0055ff, 1.5, 50); // Bleu plus foncé
+  const neonLight2 = new THREE.PointLight(0x0055ff, 1.5, 50);
   neonLight2.position.set(-5, -5, 5);
   scene.add(neonLight1, neonLight2);
 
   // Boule centrale (style néon bleu)
   const ballGeometry = new THREE.SphereGeometry(1, 32, 32);
   const ballMaterial = new THREE.MeshStandardMaterial({
-    color: 0x0000ff, // Couleur bleue
-    emissive: 0x0077ff, // Émission bleue pour l'effet néon
-    emissiveIntensity: 1.5, // Intensité de l'émission
+    color: 0x0000ff,
+    emissive: 0x0077ff,
+    emissiveIntensity: 1.5,
     metalness: 0.8,
     roughness: 0.2,
   });
@@ -43,7 +44,7 @@ export default function setupGalaxyView() {
   }
   particlesGeometry.setAttribute('position', new THREE.BufferAttribute(positions, 3));
   const particlesMaterial = new THREE.PointsMaterial({
-    color: 0x00ffff, // Couleur des particules bleues
+    color: 0x00ffff,
     size: 0.1,
   });
   const particles = new THREE.Points(particlesGeometry, particlesMaterial);
@@ -98,9 +99,26 @@ export default function setupGalaxyView() {
   animate();
 
   // Réagir au redimensionnement
-  window.addEventListener('resize', () => {
-    camera.aspect = window.innerWidth / window.innerHeight;
+  function onResize() {
+    const aspectRatio = window.innerWidth / window.innerHeight;
+
+    // Ajuster la caméra
+    camera.aspect = aspectRatio;
     camera.updateProjectionMatrix();
+
+    // Ajuster la taille du rendu
     renderer.setSize(window.innerWidth, window.innerHeight);
-  });
+
+    // Ajouter une limite pour les très petits écrans
+    if (window.innerWidth < 768) {
+      camera.fov = 90;
+    } else {
+      camera.fov = 75;
+    }
+    camera.updateProjectionMatrix();
+  }
+
+  window.addEventListener('resize', onResize);
+  onResize();
 }
+
