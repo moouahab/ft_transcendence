@@ -44,7 +44,7 @@ async function loadView(view) {
     if (routes.public[view]) {
       if (isAuthenticated && (view === "connect" || view === "signup")) {
         alert("Vous êtes déjà connecté !");
-        window.location.hash = "#home";
+        window.location.hash = "#dashboard";
         return;
       }
       await routes.public[view](); // Charger la route publique

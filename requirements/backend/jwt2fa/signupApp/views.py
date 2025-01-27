@@ -1,12 +1,15 @@
+# signupApp/views.py
+
+import logging
 from rest_framework.views import APIView
 from rest_framework.response import Response
 from rest_framework import status
 from rest_framework.permissions import AllowAny
 from django.conf import settings
 from .serializers import SignupUserSerializer
-from .utils import generate_tokens_for_user
-from .utils import validate_access_token
+from .utils import generate_tokens_for_user, validate_access_token
 
+logger = logging.getLogger(__name__)
 
 class SignupView(APIView):
     permission_classes = [AllowAny]
@@ -14,42 +17,55 @@ class SignupView(APIView):
     def post(self, request, *args, **kwargs):
         serializer = SignupUserSerializer(data=request.data)
         if serializer.is_valid():
-            user = serializer.save()
+            try:
+                user = serializer.save()
 
-            # Génération des tokens JWT
-            tokens = generate_tokens_for_user(user)
+                # Génération des tokens JWT
+                tokens = generate_tokens_for_user(user)
+                
+                # Log des tokens générés
+                logger.info(f"Tokens générés pour l'utilisateur {user.email}")
+                logger.debug(f"Access Token : {tokens['access']}")
+                logger.debug(f"Refresh Token : {tokens['refresh']}")
 
-            # Création de la réponse
-            response = Response({
-                "message": "Utilisateur créé avec succès. Veuillez confirmer votre email.",
-                "access_token": tokens["access"],
-                "refresh_token": tokens["refresh"]
-            }, status=status.HTTP_201_CREATED)
+                # Création de la réponse
+                response = Response({
+                    "message": "Utilisateur créé avec succès. Veuillez confirmer votre email.",
+                    "access_token": tokens["access"],
+                    "refresh_token": tokens["refresh"]
+                }, status=status.HTTP_201_CREATED)
 
-            # Stocker les tokens dans les cookies
-            secure = not settings.DEBUG
-            response.set_cookie(
-                key="access",
-                value=tokens["access"],
-                httponly=True,
-                secure=secure,
-                samesite='Strict',
-                max_age=3600  # Expiration en 1 heure
-            )
-            response.set_cookie(
-                key="refresh",
-                value=tokens["refresh"],
-                httponly=True,
-                secure=secure,
-                samesite='Strict'
-            )
+                # Stocker les tokens dans les cookies
+                secure = not settings.DEBUG
+                response.set_cookie(
+                    key="access",
+                    value=tokens["access"],
+                    httponly=True,
+                    secure=secure,
+                    samesite='Strict',
+                    max_age=3600  # Expiration en 1 heure
+                )
+                response.set_cookie(
+                    key="refresh",
+                    value=tokens["refresh"],
+                    httponly=True,
+                    secure=secure,
+                    samesite='Strict'
+                )
 
-            return response
-        return Response({
-            "message": "Échec de la création de l'utilisateur.",
-            "errors": serializer.errors
-        }, status=status.HTTP_400_BAD_REQUEST)
-
+                return response
+            except Exception as e:
+                logger.error(f"Erreur lors de la création de l'utilisateur : {str(e)}")
+                return Response({
+                    "message": "Une erreur interne s'est produite.",
+                    "details": str(e)
+                }, status=status.HTTP_500_INTERNAL_SERVER_ERROR)
+        else:
+            logger.warning(f"Échec de l'inscription avec les données : {serializer.errors}")
+            return Response({
+                "message": "Échec de la création de l'utilisateur.",
+                "errors": serializer.errors
+            }, status=status.HTTP_400_BAD_REQUEST)
 
 
 class CheckTokenView(APIView):

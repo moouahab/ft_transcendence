@@ -1,3 +1,5 @@
+# signupApp/models.py
+
 from django.db import models
 from django.contrib.auth.models import AbstractBaseUser, BaseUserManager, PermissionsMixin
 from django.utils import timezone
@@ -35,13 +37,14 @@ class SignupUser(AbstractBaseUser, PermissionsMixin):
     is_active = models.BooleanField(default=True)
     is_staff = models.BooleanField(default=False)
     date_joined = models.DateTimeField(default=timezone.now)
-    is_2fa_enabled = models.BooleanField(default=False)
+    is_2fa_enabled = models.BooleanField(default=True)
     activation_token = models.CharField(max_length=32, blank=True, null=True)
 
     # Champ pour la photo de profil
     profile_picture = models.ImageField(upload_to='image_profile/', blank=True, null=True)
 
     otp_code = models.CharField(max_length=6, blank=True, null=True)
+    otp_attempts = models.IntegerField(default=0)
     otp_created_at = models.DateTimeField(blank=True, null=True)
     
     objects = SignupUserManager()

@@ -1,12 +1,17 @@
+# utils.py
+
+import os
 import random
 import requests
-import os
+import logging
 from django.conf import settings
 from django.utils import timezone
 from django.core.mail import send_mail
 from rest_framework_simplejwt.tokens import RefreshToken
 from rest_framework_simplejwt.authentication import JWTAuthentication
 from rest_framework_simplejwt.exceptions import InvalidToken, TokenError
+
+logger = logging.getLogger(__name__)
 
 def generate_tokens_for_user(user):
     """
@@ -29,7 +34,6 @@ def validate_access_token(token):
         return False
 
 
-
 def verify_email(email):
     """
     Vérifie l'existence réelle d'un email via l'API Abstract Email Validation.
@@ -41,10 +45,10 @@ def verify_email(email):
         "email": email
     }
     try:
-        response = requests.get(api_url, params=params)
+        response = requests.get(api_url, params=params, timeout=5)
         response.raise_for_status()
         data = response.json()
-        print("Réponse Abstract :", data)
+        logger.debug(f"Réponse Abstract : {data}")
 
         # Vérifie tous les critères de validité
         is_valid = (
@@ -55,9 +59,8 @@ def verify_email(email):
         )
         return is_valid
     except requests.RequestException as e:
-        print(f"Erreur de connexion à l'API Abstract : {str(e)}")
+        logger.error(f"Erreur de connexion à l'API Abstract pour l'email {email} : {str(e)}")
         return False
-
 
 
 def generate_otp_for_user(user):
@@ -76,8 +79,8 @@ def generate_otp_for_user(user):
     user.otp_created_at = otp_created_at
     user.save(update_fields=["otp_code", "otp_created_at"])
     
+    logger.debug(f"OTP généré pour {user.email}: {otp_code}")
     return otp_code
-
 
 
 def send_otp_email(user, otp_code):
@@ -86,8 +89,12 @@ def send_otp_email(user, otp_code):
     """
     subject = "Votre code OTP pour la connexion"
     message = f"Bonjour {user.username},\n\nVotre code OTP est : {otp_code}\nIl est valable pendant 5 minutes.\n\nSi vous n'avez pas tenté de vous connecter, ignorez cet e-mail."
-    from_email = 'moouahab.transcendence@gmail.com'  # ou une adresse mail dédiée
+    from_email = settings.DEFAULT_FROM_EMAIL  # Utilise les paramètres définis dans settings.py
     recipient_list = [user.email]
 
-    # Envoie de l'email
-    send_mail(subject, message, from_email, recipient_list)
+    try:
+        send_mail(subject, message, from_email, recipient_list)
+        logger.info(f"OTP envoyé à {user.email}")
+    except Exception as e:
+        logger.error(f"Erreur lors de l'envoi de l'OTP à {user.email} : {str(e)}")
+        raise
