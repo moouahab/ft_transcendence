@@ -1,63 +1,100 @@
 export default function ConnectView() {
-  const form = document.getElementById('loginForm');
-  const responseElement = document.getElementById('response');
+  const form = document.getElementById("loginForm");
+  const responseElement = document.getElementById("response");
 
-  form.addEventListener('submit', function(e) {
+  // 1. Fonction pour afficher des messages stylés (similaire au signup)
+  function showMessage(message, type, duration = 3000) {
+    // Définir le contenu et la classe
+    responseElement.textContent = message;
+    responseElement.className = ""; // Réinitialise toutes les classes
+    responseElement.classList.add(type); // success, error, info, etc.
+
+    // Afficher le message
+    responseElement.style.display = "block";
+    responseElement.style.opacity = "1";
+
+    // Masquer automatiquement après un certain délai
+    setTimeout(() => {
+      responseElement.style.opacity = "0";
+      setTimeout(() => {
+        responseElement.style.display = "none";
+      }, 500);
+    }, duration);
+  }
+
+  // 2. Écouteur de l'événement submit
+  form.addEventListener("submit", function (e) {
     e.preventDefault();
 
-    const email = document.getElementById('email').value;
-    const password = document.getElementById('password').value;
+    const email = document.getElementById("email").value;
+    const password = document.getElementById("password").value;
     const data = { email, password };
 
-    fetch('https://localhost/api/api/login/', {
-      method: 'POST',
+    // 3. Appel fetch pour se connecter
+    fetch("https://localhost/api/api/login/", {
+      method: "POST",
       headers: {
-        'Content-Type': 'application/json',
-        'Accept': 'application/json'
+        "Content-Type": "application/json",
+        Accept: "application/json",
       },
-      credentials: 'include',  // pour inclure les cookies dans la requête
-      body: JSON.stringify(data)
+      credentials: "include",
+      body: JSON.stringify(data),
     })
-    .then(async (response) => {
-      // On tente de parser le JSON directement
-      let jsonData;
-      try {
-        jsonData = await response.json();
-      } catch (parseError) {
-        // Si le JSON n'est pas valide, on l'affiche en brut
-        const text = await response.text();
-        throw new Error(`Erreur de parsing JSON: ${parseError.message}\nRéponse brute: ${text}`);
-      }
+      .then(async (response) => {
+        let jsonData;
+        try {
+          jsonData = await response.json();
+        } catch (parseError) {
+          const text = await response.text();
+          // Erreur si la réponse n'est pas en JSON
+          throw new Error(
+            "Erreur de parsing JSON: " +
+              parseError.message +
+              "\nRéponse brute: " +
+              text
+          );
+        }
 
-      if (!response.ok) {
-        // Erreur HTTP (400, 401, etc.)
-        throw new Error(jsonData.message || 'Une erreur est survenue');
-      }
+        // Gère les statuts d'erreur HTTP
+        if (!response.ok) {
+          if (response.status === 401) {
+            // 401 => Identifiants invalides
+            throw new Error("Identifiant ou mot de passe invalide");
+          } else {
+            // Autres erreurs
+            throw new Error(jsonData.message || "Une erreur est survenue");
+          }
+        }
 
-      // Si tout va bien, on récupère le json
-      return jsonData;
-    })
-    .then((data) => {
-      console.log('Réponse JSON :', data);
+        // Si ok, on renvoie les données pour la suite
+        return jsonData;
+      })
+      .then((data) => {
+        // 4. Gestion de la 2FA ou non
+        // Si on a des tokens => pas de 2FA => "Connexion réussie"
+        if (data.access_token && data.refresh_token) {
+          showMessage("Connexion réussie !", "success");
 
-      // Affichage simple du message dans la zone #response
-      responseElement.innerText = JSON.stringify(data, null, 2);
+          // Redirige après un petit délai pour que l'utilisateur voie le message
+          setTimeout(() => {
+            window.location.hash = "#dashboard";
+          }, 800);
 
-      // Vérifier la présence de tokens 
-      if (data.access_token && data.refresh_token) {
-        // => 2FA n'est pas activée, on a reçu nos tokens (stockés en cookies)
-        // Redirection vers le dashboard
-        window.location.hash = '#dashboard';
+        } else {
+          // Pas de tokens => 2FA activée => affiche un message puis redirige
+          showMessage(
+            "Identifiants validés, un code OTP a été envoyé par email.",
+            "info"
+          );
 
-      } else {
-        // => Probablement 2FA activée, on n'a pas de tokens
-        // On redirige vers la page OTP
-        window.location.hash = '#otp';
-      }
-    })
-    .catch((error) => {
-      console.error('Erreur lors de la connexion :', error);
-      responseElement.innerText = error.message;
-    });
+          setTimeout(() => {
+            window.location.hash = "#otp";
+          }, 1200);
+        }
+      })
+      .catch((error) => {
+        // 5. Affiche l'erreur dans un style "error"
+        showMessage(error.message, "error");
+      });
   });
 }

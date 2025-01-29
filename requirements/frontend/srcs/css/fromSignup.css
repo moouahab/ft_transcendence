@@ -164,7 +164,8 @@ body, html {
 /* Styles des Messages de Réponse */
 #response {
     position: absolute;
-    top: 10px;
+    top: 50%;
+    left: 50%;
     transform: translate(-50%, -50%);
     font-size: 16px;
     font-weight: bold;
@@ -175,6 +176,7 @@ body, html {
     display: none;
     transition: opacity 0.5s ease-in-out;
     box-shadow: 0 0 15px rgba(0, 255, 255, 0.6);
+    z-index: 1000000;
 }
 
 #response.success {
