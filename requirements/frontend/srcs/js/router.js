@@ -19,7 +19,12 @@ const routes = {
     },
     home: async () => {
       setupGalaxyView();
-    }
+    },
+    otp: async () => {
+      app.innerHTML = await fetchTemplate("./srcs/templates/otp.html");
+      const module = await import("./views/otp.js");
+      module.default();
+    },
   },
   protected: {
     dashboard: async () => {

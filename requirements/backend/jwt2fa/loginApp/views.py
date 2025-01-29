@@ -29,7 +29,7 @@ class LoginView(APIView):
                             status=status.HTTP_400_BAD_REQUEST)
 
         # Authentifier l'utilisateur
-        user = authenticate(request, email=email, password=password)  # Correction ici
+        user = authenticate(request, email=email, password=password)
 
         if user is not None:
             if user.is_2fa_enabled:
@@ -100,7 +100,7 @@ class VerifyOTPView(APIView):
 
                 # Stocker les tokens dans les cookies
                 secure = True
-                response.set_cookie(key="access", value=tokens["access"], httponly=True, secure=secure, samesite='Strict', max_age=3600)
+                response.set_cookie(key="access", value=tokens["access"], httponly=True, secure=secure, samesite='Strict', max_age=36000)
                 response.set_cookie(key="refresh", value=tokens["refresh"], httponly=True, secure=secure, samesite='Strict')
                 logger.info(f"Tokens générés pour {user.email} après validation OTP.")
                 return response
