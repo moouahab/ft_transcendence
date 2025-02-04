@@ -6,7 +6,7 @@ from rest_framework.views import APIView
 from rest_framework.response import Response
 from rest_framework import status
 from rest_framework.permissions import AllowAny
-from django.conf import settings
+from rest_framework.permissions import IsAuthenticated
 from signupApp.utils import generate_tokens_for_user, generate_otp_for_user, send_otp_email
 from rest_framework.parsers import JSONParser
 from signupApp.models import SignupUser
@@ -50,7 +50,7 @@ class LoginView(APIView):
                 response = Response({ "message": f"Bienvenue, {user.username} !", "access_token": tokens["access"], "refresh_token": tokens["refresh"]
                 }, status=status.HTTP_200_OK)
                 secure = True
-                response.set_cookie(key="access", value=tokens["access"], httponly=True, secure=secure, samesite='Strict', max_age=3600)
+                response.set_cookie(key="access", value=tokens["access"], httponly=True, secure=secure, samesite='Strict', max_age=86400000)
                 response.set_cookie(key="refresh", value=tokens["refresh"],  httponly=True, secure=secure, samesite='Strict')
                 logger.info(f"Tokens générés pour {user.email}")
                 return response
@@ -100,7 +100,7 @@ class VerifyOTPView(APIView):
 
                 # Stocker les tokens dans les cookies
                 secure = True
-                response.set_cookie(key="access", value=tokens["access"], httponly=True, secure=secure, samesite='Strict', max_age=36000)
+                response.set_cookie(key="access", value=tokens["access"], httponly=True, secure=secure, samesite='Strict', max_age=86400000)
                 response.set_cookie(key="refresh", value=tokens["refresh"], httponly=True, secure=secure, samesite='Strict')
                 logger.info(f"Tokens générés pour {user.email} après validation OTP.")
                 return response
@@ -122,3 +122,14 @@ class VerifyOTPView(APIView):
             logger.warning(f"OTP invalide pour l'utilisateur {email}. Tentative {user.otp_attempts}/5.")
             return Response({"message": "Code OTP invalide."},
                             status=status.HTTP_400_BAD_REQUEST)
+
+
+class LogoutView(APIView):
+    permission_classes = [IsAuthenticated]
+
+    def post(self, request, *args, **kwargs):
+        response = Response({"message": "Déconnexion réussie."}, status=status.HTTP_200_OK)
+        response.delete_cookie("access")
+        response.delete_cookie("refresh")
+        return response
+

@@ -10,12 +10,13 @@ body, html {
     background: radial-gradient(circle at center, #0a0a0a, #11151d);
 }
 
-.inscription {
+.section-form {
     display: flex;
     justify-content: center;
     align-items: center;
     padding: 5%;
     color: #e6f1ff;
+    height: 100vh;
     text-shadow: 0 0 10px rgba(0, 255, 255, 0.3);
 }
 

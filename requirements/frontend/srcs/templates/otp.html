@@ -1,12 +1,20 @@
-<form id="otpForm">
-    <label>Email</label>
-    <input type="email" id="otpEmail" required />
-  
-    <label>Code OTP</label>
-    <input type="text" id="otpCode" required />
-  
-    <button type="submit">Valider</button>
+<section class="section-form">
+
+  <form id="otpForm" class="form-container">
+    <div class="form-group">
+      <label>Email</label>
+      <input type="email" id="otpEmail" required />
+    </div>
+    <div class="form-group">
+      <label>Code OTP</label>
+      <input type="text" id="otpCode" required />
+    </div>
+    <div class="connect-btn">
+      <button type="submit" class="cancel-btn">Se connecter</button>
+      <a href="#" class="cancel-btn">Annuler</a>
+    </div>
   </form>
   
-  <div id="otpResponse"></div>
+  <div id="response"></div>
   
+</section>

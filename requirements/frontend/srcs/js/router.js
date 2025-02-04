@@ -1,9 +1,11 @@
 import { isUserAuthenticated } from "./utils.js";
 import { fetchTemplate } from "./utils.js";
 import { showLoader, hideLoader } from "./utils.js";
+import init from "./views/dashboard.js";
 import setupSignupView from "./views/signup.js";
 import ConnectView from './views/connect.js';
 import setupGalaxyView from "./3js/galaxy.js";
+
 
 const app = document.getElementById("app");
 
@@ -28,7 +30,9 @@ const routes = {
   },
   protected: {
     dashboard: async () => {
-      app.innerHTML = await fetchTemplate("./srcs/templates/dashboard.html");
+      app.innerHTML = await fetchTemplate("./srcs/templates/general/header.html");
+      app.innerHTML += await fetchTemplate("./srcs/templates/dashboard.html");
+      init(); // Charger les scripts pour la page dashboard
     },
   },
   notFound: async () => {
