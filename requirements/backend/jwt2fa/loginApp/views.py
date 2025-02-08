@@ -6,7 +6,7 @@ from rest_framework.views import APIView
 from rest_framework.response import Response
 from rest_framework import status
 from rest_framework.permissions import AllowAny
-from django.conf import settings
+from rest_framework.permissions import IsAuthenticated
 from signupApp.utils import generate_tokens_for_user, generate_otp_for_user, send_otp_email
 from rest_framework.parsers import JSONParser
 from signupApp.models import SignupUser
@@ -29,7 +29,7 @@ class LoginView(APIView):
                             status=status.HTTP_400_BAD_REQUEST)
 
         # Authentifier l'utilisateur
-        user = authenticate(request, email=email, password=password)  # Correction ici
+        user = authenticate(request, email=email, password=password)
 
         if user is not None:
             if user.is_2fa_enabled:
@@ -50,7 +50,7 @@ class LoginView(APIView):
                 response = Response({ "message": f"Bienvenue, {user.username} !", "access_token": tokens["access"], "refresh_token": tokens["refresh"]
                 }, status=status.HTTP_200_OK)
                 secure = True
-                response.set_cookie(key="access", value=tokens["access"], httponly=True, secure=secure, samesite='Strict', max_age=3600)
+                response.set_cookie(key="access", value=tokens["access"], httponly=True, secure=secure, samesite='Strict', max_age=86400000)
                 response.set_cookie(key="refresh", value=tokens["refresh"],  httponly=True, secure=secure, samesite='Strict')
                 logger.info(f"Tokens générés pour {user.email}")
                 return response
@@ -122,3 +122,39 @@ class VerifyOTPView(APIView):
             logger.warning(f"OTP invalide pour l'utilisateur {email}. Tentative {user.otp_attempts}/5.")
             return Response({"message": "Code OTP invalide."},
                             status=status.HTTP_400_BAD_REQUEST)
+
+
+class LogoutView(APIView):
+    permission_classes = [IsAuthenticated]
+
+    def post(self, request, *args, **kwargs):
+        response = Response({"message": "Déconnexion réussie."}, status=status.HTTP_200_OK)
+        response.delete_cookie("access")
+        response.delete_cookie("refresh")
+        return response
+
+
+
+from rest_framework.permissions import IsAuthenticated
+from rest_framework_simplejwt.tokens import RefreshToken
+from rest_framework.views import APIView
+from rest_framework.response import Response
+from rest_framework import status
+
+class RefreshTokenView(APIView):
+    def post(self, request, *args, **kwargs):
+        refresh_token = request.COOKIES.get("refresh")  # Récupération du refresh token depuis les cookies
+        if not refresh_token:
+            return Response({"message": "Aucun Refresh Token trouvé."}, status=status.HTTP_401_UNAUTHORIZED)
+
+        try:
+            new_access_token = str(RefreshToken(refresh_token).access_token)  # Générer un nouvel access_token
+            response = Response({"access_token": new_access_token}, status=status.HTTP_200_OK)
+
+            # Remettre le nouveau token dans le cookie
+            secure = True
+            response.set_cookie(key="access", value=new_access_token, httponly=True, secure=secure, samesite='Strict', max_age=3600)
+
+            return response
+        except Exception as e:
+            return Response({"message": "Refresh Token invalide ou expiré."}, status=status.HTTP_401_UNAUTHORIZED)
