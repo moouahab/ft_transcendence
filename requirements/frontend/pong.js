@@ -1,3 +1,5 @@
+let ia = false;  // Variable pour activer/désactiver l'IA
+
 function initPongGame() {
     const scene = new THREE.Scene();
     const camera = new THREE.PerspectiveCamera(75, window.innerWidth / window.innerHeight, 0.1, 1000);
@@ -35,8 +37,8 @@ function initPongGame() {
     pongSection.appendChild(renderer.domElement);
 
     // Position de la caméra (légèrement inclinée pour une meilleure vue)
-    camera.position.set(0, 6, 10);
-    // camera.position.set(0, 10, 0);
+    // camera.position.set(0, 6, 10);
+    camera.position.set(0, 10, 0);
     camera.lookAt(0, 0, 0);
 
     // Plateau (plus large)
@@ -159,6 +161,7 @@ function initPongGame() {
         if (checkWin())
         {
             // gameOver = false;
+            ia = false;
             return ;
         }
 
@@ -205,8 +208,20 @@ function initPongGame() {
 
         // Déplacer les paddles
         paddleLeft.position.z += paddleLeftSpeed;
-        paddleRight.position.z += paddleRightSpeed;
-
+        if (ia) {
+            // L'IA suit la balle sur l'axe Z (verticaux)
+            if (ball.position.z > paddleRight.position.z + 0.5)
+            {
+                paddleRight.position.z += paddleMaxSpeed;
+            }
+            else if (ball.position.z < paddleRight.position.z - 0.5)
+            {
+                paddleRight.position.z -= paddleMaxSpeed;
+            }
+        } else {
+            // Mouvement contrôlé par l'utilisateur si l'IA est désactivée
+            paddleRight.position.z += paddleRightSpeed;
+        }
         // Limiter les mouvements des paddles pour ne pas dépasser les murs
         if (paddleLeft.position.z > 2.2) paddleLeft.position.z = 2.2;
         if (paddleLeft.position.z < -2.2) paddleLeft.position.z = -2.2;
@@ -233,3 +248,19 @@ document.getElementById('button-commencer').addEventListener('click', () => {
     initPongGame();
   });
   
+// Lorsque le bouton "Commencer" pour l'IA est pressé
+document.getElementById('button-startIa').addEventListener('click', () => {
+    // Afficher la section du jeu
+    const pongSection = document.getElementById('choix-PONG');
+    pongSection.style.display = 'block';
+  
+    // Supprimer le canvas existant, s'il existe
+    const existingCanvas = pongSection.querySelector('canvas');
+    if (existingCanvas) {
+        pongSection.removeChild(existingCanvas);
+    }
+  
+    // Démarrer le jeu en créant un nouveau canvas
+    ia = true;  // Active l'IA pour le paddle droit
+    initPongGame();
+});

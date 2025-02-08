@@ -8,6 +8,7 @@ function showSection(sectionId)
     document.getElementById('choix-social').style.display = 'none';
     document.getElementById('choix-PONG').style.display = 'none';
     document.getElementById('choix-player').style.display = 'none';
+    document.getElementById('choix-ia').style.display = 'none';
 
     document.getElementById(sectionId).style.display = 'block';
 
