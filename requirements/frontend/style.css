@@ -265,3 +265,62 @@ button:hover {
     color: black;
     transform: scale(1.1);
 }
+
+
+/* Section Tournois */
+
+#choix-tournois h2 {
+    font-family: 'Press Start 2P', cursive;
+    font-size: 1.5em;
+    margin-bottom: 15px;
+    color: white;
+}
+
+#player-selection {
+    margin-top: 20px;
+}
+
+#player-selection label {
+    display: block;
+    margin: 5px 0;
+    font-size: 1.2em;
+    color: rgb(255, 251, 0);
+}
+
+#player-selection input {
+    width: 204px;
+    padding: 20px;
+    font-size: 1em;
+    margin: 5px;
+    border-radius: 50px;
+}
+
+#match-display {
+    text-align: center;
+    padding: 20px;
+}
+
+#match-display h2 {
+    font-family: 'Press Start 2P', cursive;
+    font-size: 2em;
+    margin-bottom: 20px;
+}
+
+#match-display div {
+    margin-bottom: 10px;
+    font-size: 1.5em;
+}
+
+#match-display button {
+    padding: 10px 20px;
+    background-color: #28a745;
+    color: white;
+    border: none;
+    border-radius: 5px;
+    cursor: pointer;
+    font-size: 1.2em;
+}
+
+#match-display button:hover {
+    background-color: #218838;
+}

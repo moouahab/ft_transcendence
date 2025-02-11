@@ -1,4 +1,8 @@
 let ia = false;  // Variable pour activer/désactiver l'IA
+let iaErrorProbability = 0.2; // 50% de chance de rater
+let lastIaUpdate = Date.now();
+let speedFactor = 5; // Facteur pour compenser le délai
+var isTournament = false; // Indique si un tournoi est en cours
 
 function initPongGame() {
     const scene = new THREE.Scene();
@@ -130,107 +134,146 @@ function initPongGame() {
     // Condition Victoire
     function checkWin()
     {
-        if (player1Score === 3)
+        console.log(isTournament);
+        if (isTournament == false)
         {
-            gameOver = true; // Empêche que cela se répète
-            document.getElementById('choix-jeu').style.display = 'block'; // Affiche la section
-            document.getElementById('choix-PONG').style.display = 'none'; // Cache le jeu
-            resetScore();
-            return true; // Stopper l'animation
+            if (player1Score === 3)
+            {
+                gameOver = true; // Empêche que cela se répète
+                document.getElementById('choix-jeu').style.display = 'block'; // Affiche la section
+                document.getElementById('choix-PONG').style.display = 'none'; // Cache le jeu
+                resetScore();
+                return true; // Stopper l'animation
+            }
+            if (player2Score === 3)
+            {
+                gameOver = true; // Empêche que cela se répète
+                document.getElementById('choix-jeu').style.display = 'block'; // Affiche la section
+                document.getElementById('choix-PONG').style.display = 'none'; // Cache le jeu
+                resetScore();
+                return true; // Stopper l'animation
+            }
         }
-        if (player2Score === 3)
+        else
         {
-            gameOver = true; // Empêche que cela se répète
-            document.getElementById('choix-jeu').style.display = 'block'; // Affiche la section
-            document.getElementById('choix-PONG').style.display = 'none'; // Cache le jeu
-            resetScore();
-            return true; // Stopper l'animation
+            if (player1Score === 3) {
+                gameOver = true;
+                document.getElementById('match-display').style.display = 'block';
+                document.getElementById('choix-PONG').style.display = 'none';
+                resetScore();
+                finishMatch(currentMatchIndex, "Player 1"); // Met à jour le gagnant
+                return true;
+            }
+            if (player2Score === 3) {
+                gameOver = true;
+                document.getElementById('match-display').style.display = 'block';
+                document.getElementById('choix-PONG').style.display = 'none';
+                resetScore();
+                finishMatch(currentMatchIndex, "Player 2"); // Met à jour le gagnant
+                return true;
+            }
         }
         return false;
     }
-    
 
-    // Animation
-    function animate()
-    {
-        if (!gameOver)
-        {
+
+    function animate() {
+        if (!gameOver) {
             requestAnimationFrame(animate);
         }
-
-        if (checkWin())
-        {
-            // gameOver = false;
+    
+        if (checkWin()) {
             ia = false;
-            return ;
+            return;
         }
-
+    
         // Déplacer la balle
         ball.position.add(ballVelocity);
-
+    
         // Vérification des collisions avec les bordures verticales
         if (ball.position.z > 2.8 || ball.position.z < -2.8) {
-            ballVelocity.z = -ballVelocity.z; // Inverser la direction sur l'axe Z
+            ballVelocity.z = -ballVelocity.z;
         }
-
-        // Vérification des collisions avec les paddles (ajusté pour les nouvelles tailles)
+    
+        // Vérification des collisions avec les paddles
         if (ball.position.z > paddleLeft.position.z - 0.75 && ball.position.z < paddleLeft.position.z + 0.75 &&
             ball.position.x > paddleLeft.position.x - 0.2 && ball.position.x < paddleLeft.position.x + 0.1) {
-            ballVelocity.x = -ballVelocity.x * 1.2; // Renverser la direction X
+            ballVelocity.x = -ballVelocity.x * 1.2;
         }
-
+    
         if (ball.position.z > paddleRight.position.z - 0.75 && ball.position.z < paddleRight.position.z + 0.75 &&
             ball.position.x > paddleRight.position.x - 0.2 && ball.position.x < paddleRight.position.x + 0.2) {
-            ballVelocity.x = -ballVelocity.x * 1.2; // Renverser la direction X
+            ballVelocity.x = -ballVelocity.x * 1.2;
         }
-
-        // Vérification des collisions avec les bords gauche/droit (score incrémenté)
+    
+        // Vérification des collisions avec les bords gauche/droit
         if (ball.position.x > 6.25) {
-            // Player 1 marque
             player1Score++;
-            updateScore(); // Mise à jour du score
-            ball.position.set(0, 0.5, 0); // Reset de la balle
-            ballVelocity.set(0.05, 0, 0.05);
-            paddleLeft.position.set(-5.5, 0.5, 0);
-            paddleRight.position.set(5.5, 0.5, 0);
+            updateScore();
+            resetGame();
         }
-
+    
         if (ball.position.x < -6.25) {
-            // Player 2 marque
             player2Score++;
-            updateScore(); // Mise à jour du score
-            ball.position.set(0, 0.5, 0); // Reset de la balle
-            ballVelocity.set(0.05, 0, 0.05);
-            paddleLeft.position.set(-5.5, 0.5, 0);
-            paddleRight.position.set(5.5, 0.5, 0);
+            updateScore();
+            resetGame();
         }
-
-
+    
         // Déplacer les paddles
         paddleLeft.position.z += paddleLeftSpeed;
-        if (ia) {
-            // L'IA suit la balle sur l'axe Z (verticaux)
-            if (ball.position.z > paddleRight.position.z + 0.5)
-            {
-                paddleRight.position.z += paddleMaxSpeed;
+        
+        if (ia)
+        {
+            let currentTime = Date.now();
+            if (currentTime - lastIaUpdate > 1000) { // Vérifie si 1 seconde est écoulée
+                lastIaUpdate = currentTime; // Met à jour le dernier moment où l'IA a réagi
+
+
+                if (Math.random() < 0.99) { // 20% de chance que l'IA soit quasiment imbattable
+                    // Anticipation parfaite et déplacement du paddle avec une grande vitesse
+                    let perfectFutureBallZ = ball.position.z + ballVelocity.z * 100; // Anticipation parfaite
+                    perfectFutureBallZ = Math.max(-2.2, Math.min(2.2, perfectFutureBallZ));
+                
+                    // Déplacement ultra-rapide du paddle vers la position future du ballon
+                    if (perfectFutureBallZ > paddleRight.position.z) {
+                        paddleRight.position.z += paddleMaxSpeed * 10; // 5x plus rapide
+                    } else if (perfectFutureBallZ < paddleRight.position.z) {
+                        paddleRight.position.z -= paddleMaxSpeed * 10; // 5x plus rapide
+                    }
+                }
+                else
+
+                {
+                    // Simulation d'erreur plus réaliste (mauvaise anticipation)
+                    paddleRight.position.z += (Math.random() > 0.5 ? paddleMaxSpeed * speedFactor : -paddleMaxSpeed * speedFactor);
+                }
             }
-            else if (ball.position.z < paddleRight.position.z - 0.5)
-            {
-                paddleRight.position.z -= paddleMaxSpeed;
-            }
-        } else {
-            // Mouvement contrôlé par l'utilisateur si l'IA est désactivée
+        }
+        else
+        {
             paddleRight.position.z += paddleRightSpeed;
         }
-        // Limiter les mouvements des paddles pour ne pas dépasser les murs
-        if (paddleLeft.position.z > 2.2) paddleLeft.position.z = 2.2;
-        if (paddleLeft.position.z < -2.2) paddleLeft.position.z = -2.2;
-        if (paddleRight.position.z > 2.2) paddleRight.position.z = 2.2;
-        if (paddleRight.position.z < -2.2) paddleRight.position.z = -2.2;
 
+    
+        // Limiter les mouvements des paddles
+        limitPaddleMovement();
+    
         renderer.render(scene, camera);
     }
-    animate();
+    
+    function limitPaddleMovement() {
+        paddleLeft.position.z = Math.max(-2.2, Math.min(2.2, paddleLeft.position.z));
+        paddleRight.position.z = Math.max(-2.2, Math.min(2.2, paddleRight.position.z));
+    }
+    
+    function resetGame() {
+        ball.position.set(0, 0.5, 0);
+        ballVelocity.set(0.05, 0, 0.05);
+        paddleLeft.position.set(-5.5, 0.5, 0);
+        paddleRight.position.set(5.5, 0.5, 0);
+    }
+    
+    animate();    
 }
 
 document.getElementById('button-commencer').addEventListener('click', () => {
