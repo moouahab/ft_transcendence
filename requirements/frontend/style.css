@@ -127,13 +127,13 @@ button:hover {
     padding: 30px;
     font-family: 'Press Start 2P', cursive;
     background-color: aliceblue;
-    background-image: linear-gradient(45deg, #7379d867, #3b2db6); /* Dégradé de couleurs */
+    background-image: linear-gradient(45deg, #7379d867, #3b2db6);
     font-size: 22px;
     color: white;
     border: none;
     border-radius: 50px;
     cursor: pointer;
-    transition: transform 0.3s ease, background-color 0.3s ease; /* Transition fluide sur l'agrandissement et la couleur */
+    transition: transform 0.3s ease, background-color 0.3s ease;
     width: 100%;
     margin-top: 20px;
 }
@@ -265,6 +265,12 @@ button:hover {
     color: black;
     transform: scale(1.1);
 }
+
+.btn-primary {
+    background-color: #4CAF50; /* Changer la couleur */
+    border-color: #4CAF50;
+}
+
 
 
 /* Section Tournois */

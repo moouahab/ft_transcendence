@@ -1,21 +1,26 @@
-// Fonction pour gérer l'affichage des sections en fonction de l'état
-function showSection(sectionId)
-{
-    document.getElementById('connexion').style.display = 'none';
-    document.getElementById('choix').style.display = 'none';
-    document.getElementById('choix-jeu').style.display = 'none';
-    document.getElementById('choix-compte').style.display = 'none';
-    document.getElementById('choix-social').style.display = 'none';
-    document.getElementById('choix-PONG').style.display = 'none';
-    document.getElementById('choix-player').style.display = 'none';
-    document.getElementById('choix-ia').style.display = 'none';
-    document.getElementById('choix-tournois').style.display = 'none';
-    document.getElementById('match-display').style.display = 'none';
+function showSection(sectionId) {
+    // Masquer toutes les sections
+    const sections = ['connexion', 'choix', 'choix-jeu', 'choix-compte', 'choix-social', 'choix-PONG', 'choix-player', 'choix-ia', 'choix-tournois', 'match-display'];
+    sections.forEach(section => {
+        document.getElementById(section).style.display = 'none';
+    });
 
+    // Afficher la section demandée
     document.getElementById(sectionId).style.display = 'block';
 
-    history.pushState({ section: sectionId }, "", `#${sectionId}`);
+    // Mettre à jour l'historique
+    const currentUrl = window.location.href.split('#')[0]; // Récupère l'URL de base
+    const newUrl = `${currentUrl}#${sectionId}`; // Crée une nouvelle URL avec le hash de la section
+
+    if (window.location.hash !== `#${sectionId}`) {
+        // Utiliser pushState pour ajouter l'état dans l'historique
+        history.pushState({ section: sectionId }, "", newUrl);
+    } else {
+        // Si la section est déjà dans l'URL, utilisez replaceState
+        history.replaceState({ section: sectionId }, "", newUrl);
+    }
 }
+
 
 // // Fonction de soumission du formulaire
 // document.getElementById('formConnexion').addEventListener('submit', function(e) {
@@ -63,6 +68,14 @@ document.getElementById('button-compte').addEventListener('click', function() {
 
 document.getElementById('button-social').addEventListener('click', function() {
     showSection('choix-social'); // Afficher la section du social
+});
+
+document.addEventListener("DOMContentLoaded", () =>
+{
+    if (window.location.hash === "#choix-PONG")
+    {
+        initPongGame();
+    }
 });
 
 let players = [];
