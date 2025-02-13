@@ -64,6 +64,43 @@ form.addEventListener('submit', async (event) => {
     }
 });
 
+document.getElementById('loginForm').addEventListener('submit', async (event) => {
+    event.preventDefault();
+
+    // Récupération des données du formulaire
+    const email = event.target.querySelector('input[name="email"]').value;
+    const password = event.target.querySelector('input[name="password"]').value;
+
+    // Création de l'objet de connexion
+    const data = { username: email, password: password };
+
+    try {
+        const response = await fetch('https://localhost:3000/api/api/login/', {
+            method: 'POST',
+            headers: {
+                'Content-Type': 'application/json',
+            },
+            credentials: 'include',
+            body: JSON.stringify(data)
+        });
+
+        if (response.ok) {
+            const result = await response.json();
+            console.log('Connexion réussie :', result);
+            alert('Connexion réussie !');
+            showSection('choix'); // Rediriger vers le menu
+        } else {
+            const errorData = await response.json();
+            console.error('Erreur de connexion :', errorData);
+            alert(errorData.message || 'Identifiants incorrects.');
+        }
+    } catch (error) {
+        console.error('Erreur inattendue :', error);
+        alert('Erreur inattendue. Vérifie ta connexion ou contacte l’admin.');
+    }
+});
+
+
 // Gérer les changements d'historique (par exemple, lorsque l'utilisateur utilise le bouton retour)
 window.onpopstate = function(event) {
     if (event.state) {

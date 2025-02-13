@@ -28,11 +28,11 @@
 
     <div class="content" id="seConnecter">
         <h1>Connexion</h1>
-        <form id="signupForm" method="POST">
-            <input type="text" name="pseudo" placeholder="Pseudo" required>
+        <form id="loginForm" method="POST">
+            <input type="text" name="email" placeholder="email" required>
             <input type="password" name="password" placeholder="Mot de passe" required>
-        </form>
-        <button id="connexion-bouton">Se connecter</button>
+            <button type="submit">Se connecter</button>
+        </form>        
         <p class="inscription-p">Pas encore inscrit ?</p>
         <button id="inscription-button" onclick="showSection('connexion')">Inscription</button>
     </div>
