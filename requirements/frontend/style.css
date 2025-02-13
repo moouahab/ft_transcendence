@@ -30,6 +30,9 @@ body {
     align-items: center;
 }
 
+.inscription-p {
+    margin-top: 20px;
+}
 
 .intro h1 {
     font-size: 40px;
@@ -154,6 +157,7 @@ button:hover {
 #button-retour {
     font-size: 18px;
     padding: 8px;
+    margin-bottom: 20px;
     background-color: #3b2db6;
     color: white;
     border-radius: 30px;
@@ -331,18 +335,9 @@ button:hover {
     background-color: #218838;
 }
 
-
-#game-board {
-    display: grid;
-    grid-template-columns: repeat(3, 100px);
-    grid-template-rows: repeat(3, 100px);
-    gap: 2px;
-    margin-left: 25%;
-  }
-  
-  .cell {
-    width: 100px;
-    height: 100px;
+#game-board .cell {
+    width: 100px; /* Fixe la largeur */
+    height: 100px; /* Fixe la hauteur */
     background-color: #8daadf;
     display: flex;
     align-items: center;
@@ -350,10 +345,36 @@ button:hover {
     font-size: 2rem;
     border: 1px solid #ccc;
     cursor: pointer;
-  }
-  
-  .cell.disabled {
-    cursor: not-allowed;
-    background-color: #ddd;
-  }
-  
+    transition: all 0.2s ease;  /* Ajout d'une transition pour un effet plus doux */
+}
+
+/* Ajout d'un effet de zoom ou de changement de taille lorsque l'on survole */
+#game-board .cell:active {
+    transform: scale(1);  /* Assure que la cellule ne change pas de taille */
+    background-color: #b2c7e0; /* Modifie légèrement la couleur au clic, si nécessaire */
+}
+
+/* Optionnel : quand une cellule est cliquée, ne pas la "faire grossir" */
+#game-board .cell.clicked {
+    transform: scale(1);  /* Evite tout agrandissement ou rétrécissement */
+}
+
+/* Style pour le bouton Retour */
+#morpion-retour {
+    padding: 30px;
+    background-color: aliceblue;
+    background-image: linear-gradient(45deg, #7379d867, #3b2db6);
+    font-size: 22px;
+    color: white;
+    border: none;
+    border-radius: 50px;
+    cursor: pointer;
+    transition: transform 0.3s ease, background-color 0.3s ease;
+    width: 100%;
+    margin-top: 20px;
+}
+
+/* Hover pour le bouton Retour */
+#morpion-retour:hover {
+    background-image: linear-gradient(45deg, #3b2db6, #7379d867);
+}

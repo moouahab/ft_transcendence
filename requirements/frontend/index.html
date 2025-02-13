@@ -4,8 +4,9 @@
         <meta charset="UTF-8">
         <meta name="viewport" content="width=device-width, initial-scale=1.0">
         <title>Inscription</title>
-        <link rel="stylesheet" href="style.css">
+        <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css">
         <link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Press+Start+2P&display=swap">
+        <link rel="stylesheet" href="style.css">
 </head>
 <body>
 
@@ -16,15 +17,24 @@
         <h1>Bienvenue</h1>
         <p>Avant de commencer ton aventure avec nous, crée un compte !</p>
 
-        <form action="#" method="POST">
+        <form id="signupForm" method="POST">
             <input type="text" name="pseudo" placeholder="Pseudo" required>
             <input type="email" name="email" placeholder="Email" required>
             <input type="password" name="password" placeholder="Mot de passe" required>
             <input type="password" name="confirm_password" placeholder="Confirme ton mot de passe" required>
             <button type="submit">Se connecter</button>
         </form>
-        <!-- Ajout du bouton pour aller plus vite -->
-        <button type="button" id="raccourcis" >Pour aller plus vite</button>
+    </div>
+
+    <div class="content" id="seConnecter">
+        <h1>Connexion</h1>
+        <form id="signupForm" method="POST">
+            <input type="text" name="pseudo" placeholder="Pseudo" required>
+            <input type="password" name="password" placeholder="Mot de passe" required>
+        </form>
+        <button id="connexion-bouton">Se connecter</button>
+        <p class="inscription-p">Pas encore inscrit ?</p>
+        <button id="inscription-button" onclick="showSection('connexion')">Inscription</button>
     </div>
 
     <!-- Section avec choix après la connexion -->
@@ -118,34 +128,39 @@
     </div>
 
     <!-- Section pour choisir de jouer au morpion -->
-    <div class="content" id="choix-morpion">
+    <div class="content container text-center" id="choix-morpion">
         <button onclick="showSection('choix-jeu')" id="button-retour">Retour</button>
-        <h1>Morpion</h1>
-        <p>Le but du morpion est d'aligner trois de tes symboles (croix ou cercle) horizontalement, verticalement ou en diagonale avant ton adversaire.</p>
+        <h1 class="mb-3">Morpion</h1>
+        <p class="mb-4">Le but du morpion est d'aligner trois de tes symboles (croix ou cercle) horizontalement, verticalement ou en diagonale avant ton adversaire.</p>
         <button onclick="startMorpion()" id="button-startMorpion">Commencer</button>
     </div>
 
     <!-- Section du jeu (masquée au début) -->
-    <div class="content" id="game-morpion" style="display:none;">
-        <div id="game-board">
-            <div class="row">
-                <div class="cell" data-index="0"></div>
-                <div class="cell" data-index="1"></div>
-                <div class="cell" data-index="2"></div>
-            </div>
-            <div class="row">
-                <div class="cell" data-index="3"></div>
-                <div class="cell" data-index="4"></div>
-                <div class="cell" data-index="5"></div>
-            </div>
-            <div class="row">
-                <div class="cell" data-index="6"></div>
-                <div class="cell" data-index="7"></div>
-                <div class="cell" data-index="8"></div>
+    <div class="container text-center" id="game-morpion" style="display:none;">
+        <div class="row justify-content-center">
+            <div class="col-4">
+                <div id="game-board" class="d-grid gap-2">
+                    <div class="row">
+                        <div class="col border p-4 cell" data-index="0"></div>
+                        <div class="col border p-4 cell" data-index="1"></div>
+                        <div class="col border p-4 cell" data-index="2"></div>
+                    </div>
+                    <div class="row">
+                        <div class="col border p-4 cell" data-index="3"></div>
+                        <div class="col border p-4 cell" data-index="4"></div>
+                        <div class="col border p-4 cell" data-index="5"></div>
+                    </div>
+                    <div class="row">
+                        <div class="col border p-4 cell" data-index="6"></div>
+                        <div class="col border p-4 cell" data-index="7"></div>
+                        <div class="col border p-4 cell" data-index="8"></div>
+                    </div>
+                </div>
             </div>
         </div>
         <button onclick="showSection('choix-jeu')" id="morpion-retour" style="display: none;">Retour</button>
     </div>
+
 
 
      <!-- Section de Compte -->

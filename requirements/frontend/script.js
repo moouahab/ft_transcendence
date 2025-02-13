@@ -1,6 +1,6 @@
 function showSection(sectionId) {
     // Masquer toutes les sections
-    const sections = ['connexion', 'choix', 'choix-jeu', 'choix-compte', 'choix-social', 'choix-PONG', 'choix-player', 'choix-ia', 'choix-tournois', 'match-display', 'choix-morpion', 'game-morpion'];
+    const sections = ['seConnecter', 'connexion', 'choix', 'choix-jeu', 'choix-compte', 'choix-social', 'choix-PONG', 'choix-player', 'choix-ia', 'choix-tournois', 'match-display', 'choix-morpion', 'game-morpion'];
     sections.forEach(section => {
         document.getElementById(section).style.display = 'none';
     });
@@ -22,21 +22,47 @@ function showSection(sectionId) {
 }
 
 
-// // Fonction de soumission du formulaire
-// document.getElementById('formConnexion').addEventListener('submit', function(e) {
-//     e.preventDefault(); // Empêche le rechargement de la page
+const form = document.getElementById('signupForm');
 
-//     const password = document.querySelector('input[name="password"]').value;
-//     const confirmPassword = document.querySelector('input[name="confirm_password"]').value;
+form.addEventListener('submit', async (event) => {
+    event.preventDefault(); // Empêche le rechargement de la page
 
-//     if (password === confirmPassword) {
-//         // Masquer la section de connexion et afficher la section des choix
-//         showSection('choix');
-//     } else {
-//         alert("Les mots de passe ne correspondent pas !");
-//     }
-// });
+    // Récupération des données du formulaire
+    const pseudo = form.querySelector('input[name="pseudo"]').value;
+    const email = form.querySelector('input[name="email"]').value;
+    const password = form.querySelector('input[name="password"]').value;
+    const confirmPassword = form.querySelector('input[name="confirm_password"]').value;
 
+    // Construction de l'objet à envoyer (mapping pseudo -> username)
+    const data = { username: pseudo, email: email, password: password, confirm_password: confirmPassword
+    };
+
+    try {
+      const response = await fetch('https://localhost:3000/api/api/signup/', {
+        method: 'POST',
+        headers: {
+          'Content-Type': 'application/json',
+        },
+        credentials: 'include', 
+        body: JSON.stringify(data)
+      });
+
+      if (response.ok)
+        {
+        const result = await response.json();
+        console.log('Succès :', result);
+        alert(result.message);
+        showSection('choix');
+      } else {
+        const errorData = await response.json();
+        console.error('Erreur :', errorData);
+        alert(errorData.message || 'Une erreur est survenue lors de la création du compte.');
+      }
+    } catch (error) {
+      console.error('Erreur inattendue :', error);
+      alert('Erreur inattendue. Vérifie ta connexion ou contacte l’admin.');
+    }
+});
 
 // Gérer les changements d'historique (par exemple, lorsque l'utilisateur utilise le bouton retour)
 window.onpopstate = function(event) {
@@ -50,13 +76,8 @@ if (window.location.hash) {
     const section = window.location.hash.substring(1);
     showSection(section);
 } else {
-    showSection('connexion');
+    showSection('seConnecter');
 }
-
-// Ajouter l'événement click pour le bouton "Pour aller plus vite"
-document.getElementById('raccourcis').addEventListener('click', function() {
-    showSection('choix');
-});
 
 document.getElementById('button-jeu').addEventListener('click', function() {
     showSection('choix-jeu'); // Afficher la section du jeu

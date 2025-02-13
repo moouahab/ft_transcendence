@@ -40,8 +40,8 @@ function initPongGame() {
     pongSection.appendChild(renderer.domElement);
 
     // Position de la caméra (légèrement inclinée pour une meilleure vue)
-    // camera.position.set(0, 6, 10);
-    camera.position.set(0, 10, 0);
+    camera.position.set(0, 6, 10);
+    // camera.position.set(0, 10, 0);
     camera.lookAt(0, 0, 0);
 
     // Plateau (plus large)
