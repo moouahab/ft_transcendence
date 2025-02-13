@@ -40,8 +40,8 @@ function initPongGame() {
     pongSection.appendChild(renderer.domElement);
 
     // Position de la caméra (légèrement inclinée pour une meilleure vue)
-    camera.position.set(0, 6, 10);
-    // camera.position.set(0, 10, 0);
+    // camera.position.set(0, 6, 10);
+    camera.position.set(0, 10, 0);
     camera.lookAt(0, 0, 0);
 
     // Plateau (plus large)
@@ -222,7 +222,7 @@ function initPongGame() {
             paddleRight.position.z -= paddleMaxSpeed;
     }
 
-    // DEBUG IA
+    // // DEBUG IA
     // function drawRedPoint(x, z)
     // {
     //     let geometry = new THREE.SphereGeometry(0.1, 32, 32);

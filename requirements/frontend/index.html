@@ -54,13 +54,14 @@
        <button onclick="showSection('choix-player')" id="button-player">PLAYER vs PLAYER</button>
        <button onclick="showSection('choix-ia')" id="button-ia">PLAYER vs IA</button>
        <button onclick="showSection('choix-tournois')" id="button-tournois">TOURNOIS</button>
+       <button onclick="showSection('choix-morpion')" id="button-morpion">JEU 2</button>
     </div>
 
     <!-- Section de Player-Player -->
     <div class="content" id="choix-player">
         <button onclick="showSection('choix-jeu')" id="button-retour">Retour</button>
         <h1>Jouer</h1>
-        <p>ARGHHHHHHHHHH!!!!!!!</p>
+        <p>Le but du jeu est de dominer ton adversaire en envoyant la balle habilement derrière son palet pour marquer des points !</p>
         <button onclick="showSection('choix-PONG')" id="button-commencer">Commencer</button>
     </div>
 
@@ -116,6 +117,35 @@
         </div>
     </div>
 
+    <!-- Section pour choisir de jouer au morpion -->
+    <div class="content" id="choix-morpion">
+        <button onclick="showSection('choix-jeu')" id="button-retour">Retour</button>
+        <h1>Morpion</h1>
+        <p>Le but du morpion est d'aligner trois de tes symboles (croix ou cercle) horizontalement, verticalement ou en diagonale avant ton adversaire.</p>
+        <button onclick="startMorpion()" id="button-startMorpion">Commencer</button>
+    </div>
+
+    <!-- Section du jeu (masquée au début) -->
+    <div class="content" id="game-morpion" style="display:none;">
+        <div id="game-board">
+            <div class="row">
+                <div class="cell" data-index="0"></div>
+                <div class="cell" data-index="1"></div>
+                <div class="cell" data-index="2"></div>
+            </div>
+            <div class="row">
+                <div class="cell" data-index="3"></div>
+                <div class="cell" data-index="4"></div>
+                <div class="cell" data-index="5"></div>
+            </div>
+            <div class="row">
+                <div class="cell" data-index="6"></div>
+                <div class="cell" data-index="7"></div>
+                <div class="cell" data-index="8"></div>
+            </div>
+        </div>
+        <button onclick="showSection('choix-jeu')" id="morpion-retour" style="display: none;">Retour</button>
+    </div>
 
 
      <!-- Section de Compte -->
@@ -153,5 +183,6 @@
     <script src="https://unpkg.com/three@0.128.0/build/three.min.js"></script>
     <script src="script.js"></script>
     <script src="pong.js"></script>
+    <script src="morpion.js"></script>
 </body>
 </html>

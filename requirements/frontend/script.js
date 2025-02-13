@@ -1,6 +1,6 @@
 function showSection(sectionId) {
     // Masquer toutes les sections
-    const sections = ['connexion', 'choix', 'choix-jeu', 'choix-compte', 'choix-social', 'choix-PONG', 'choix-player', 'choix-ia', 'choix-tournois', 'match-display'];
+    const sections = ['connexion', 'choix', 'choix-jeu', 'choix-compte', 'choix-social', 'choix-PONG', 'choix-player', 'choix-ia', 'choix-tournois', 'match-display', 'choix-morpion', 'game-morpion'];
     sections.forEach(section => {
         document.getElementById(section).style.display = 'none';
     });
