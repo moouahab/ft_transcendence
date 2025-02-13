@@ -54,6 +54,19 @@ services:
       - ./requirements/nginx/ssl:/etc/nginx/ssl:ro
       - ./requirements/nginx/modsec:/etc/nginx/modsec:ro
       - ./requirements/nginx/coreruleset:/usr/share/modsecurity-crs:ro
+      
+  vault:
+    image: vault:1.13.3
+    container_name: vault
+    env_file:
+      - .env
+    ports:
+      - "8200:8200"
+    cap_add:
+      - IPC_LOCK
+    networks:
+      - transcendence
+
 
 volumes:
   postgres_data:

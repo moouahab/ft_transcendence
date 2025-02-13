@@ -1,4 +1,3 @@
-/* Réinitialisation basique */
 * {
   box-sizing: border-box;
   margin: 0;
@@ -52,12 +51,15 @@ body {
 /* Header */
 header {
   display: flex;
-  flex-direction: column; /* Pour s'assurer d'un bon alignement */
+  justify-content: space-between;
+  align-items: center;
+  flex-wrap: nowrap;
+  gap: 20px;
   background-color: #12141a;
+  padding: 5px;
   box-shadow: 0px 4px 15px rgba(0, 255, 255, 0.1);
 }
 
-/* Liens du header */
 header a {
   color: #0ff;
   text-decoration: none;
@@ -71,6 +73,11 @@ header a:hover {
 
 /* Media Queries */
 @media (max-width: 768px) {
+  header {
+    flex-direction: column;
+    align-items: flex-start;
+  }
+
   header a {
     font-size: 1.5rem;
   }
@@ -80,53 +87,13 @@ header a:hover {
   html {
     font-size: 55%;
   }
+
+  header {
+    padding: 10px;
+  }
 }
 
-/* Navbar Custom */
-.navbar-custom {
-  display: flex;
-  justify-content: space-between;
-  background-color: #12141a !important; /* Important pour forcer sur BG bootstrap */
-}
-
-.navbar-custom a {
-  color: #e6f1ff;
-  font-size: 1.6rem;
-}
-
-nav {
-  width: 100% !important;
-}
-
-/* Lien global sans soulignement */
 a {
-  text-decoration: none;
-}
 
-/* Style de l'élément ACTIF (page en cours) */
-.active {
-  /* Couleur rose utilisée au hover */
-  color: #00ffea !important;
-
-  /*
-  // Si vous souhaitez un effet "fond clair + texte sombre", réactivez ceci :
-  background-color: #0ff;
-  color: #000 !important;
-  border-radius: 5px;
-  padding: 8px;
-  box-shadow: 0px 4px 15px rgba(0, 255, 255, 0.1);
-  */
-}
-
-/* Exemple de transition sur .active */
-.active {
-  transition: color 0.3s ease, background-color 0.3s ease;
-}
-
-/* Footer */
-footer {
-  background-color: #12141a;
-  color: #0ff;
-  padding: 1rem;
-  text-align: center;
+   text-decoration: none;
 }

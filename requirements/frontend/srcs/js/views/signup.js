@@ -15,8 +15,6 @@ export default function setupSignupView() {
 
     if (file) {
       const reader = new FileReader();
-
-      // Lorsque le fichier est chargé
       reader.onload = (e) => {
         imagePreview.src = e.target.result;
         imagePreview.style.display = "block";
@@ -24,13 +22,11 @@ export default function setupSignupView() {
         imageButton.style.border = "none";
       };
 
-      reader.readAsDataURL(file); // Lire le fichier comme une URL de données
+      reader.readAsDataURL(file);
     } else {
       resetImageButton();
     }
   });
-
-  // Fonction pour réinitialiser le bouton (si besoin)
   function resetImageButton() {
     imagePreview.style.display = "none";
     buttonText.style.display = "block";
@@ -44,8 +40,8 @@ export default function setupSignupView() {
   
     // Définir le contenu et la classe
     responseMessage.textContent = message;
-    responseMessage.className = ""; // Réinitialiser les classes
-    responseMessage.classList.add(type); // Ajouter la classe appropriée (success, error, info)
+    responseMessage.className = ""; 
+    responseMessage.classList.add(type);
   
     // Afficher le message avec une transition
     responseMessage.style.display = "block";

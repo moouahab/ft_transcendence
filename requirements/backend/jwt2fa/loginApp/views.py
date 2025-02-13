@@ -100,7 +100,7 @@ class VerifyOTPView(APIView):
 
                 # Stocker les tokens dans les cookies
                 secure = True
-                response.set_cookie(key="access", value=tokens["access"], httponly=True, secure=secure, samesite='Strict', max_age=86400000)
+                response.set_cookie(key="access", value=tokens["access"], httponly=True, secure=secure, samesite='Strict', max_age=3600)
                 response.set_cookie(key="refresh", value=tokens["refresh"], httponly=True, secure=secure, samesite='Strict')
                 logger.info(f"Tokens générés pour {user.email} après validation OTP.")
                 return response
@@ -133,3 +133,28 @@ class LogoutView(APIView):
         response.delete_cookie("refresh")
         return response
 
+
+
+from rest_framework.permissions import IsAuthenticated
+from rest_framework_simplejwt.tokens import RefreshToken
+from rest_framework.views import APIView
+from rest_framework.response import Response
+from rest_framework import status
+
+class RefreshTokenView(APIView):
+    def post(self, request, *args, **kwargs):
+        refresh_token = request.COOKIES.get("refresh")  # Récupération du refresh token depuis les cookies
+        if not refresh_token:
+            return Response({"message": "Aucun Refresh Token trouvé."}, status=status.HTTP_401_UNAUTHORIZED)
+
+        try:
+            new_access_token = str(RefreshToken(refresh_token).access_token)  # Générer un nouvel access_token
+            response = Response({"access_token": new_access_token}, status=status.HTTP_200_OK)
+
+            # Remettre le nouveau token dans le cookie
+            secure = True
+            response.set_cookie(key="access", value=new_access_token, httponly=True, secure=secure, samesite='Strict', max_age=3600)
+
+            return response
+        except Exception as e:
+            return Response({"message": "Refresh Token invalide ou expiré."}, status=status.HTTP_401_UNAUTHORIZED)

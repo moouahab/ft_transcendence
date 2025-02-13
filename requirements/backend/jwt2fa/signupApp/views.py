@@ -36,7 +36,7 @@ class SignupView(APIView):
                 }, status=status.HTTP_201_CREATED)
 
                 # Stocker les tokens dans les cookies
-                secure = not settings.DEBUG
+                secure = True
                 response.set_cookie(
                     key="access",
                     value=tokens["access"],

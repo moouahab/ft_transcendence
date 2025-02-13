@@ -1,4 +1,3 @@
-
 export default function init()  { 
     document.getElementById("logoutButton").addEventListener("click", () => {
         fetch("https://localhost/api/api/logout/", {
