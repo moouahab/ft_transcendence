@@ -66,6 +66,12 @@ services:
       - IPC_LOCK
     networks:
       - transcendence
+    volumes:
+      - ./requirements/vault/config/vault.hcl:/vault/config/vault.hcl
+      - ./requirements/vault/data:/vault/data
+      # - ./requirements/vault/certs/vault.crt:/vault/certs/vault.crt:ro
+      # - ./requirements/vault/certs/vault.key:/vault/certs/vault.key:ro
+    command: vault server -config=/vault/config/vault.hcl
 
 
 volumes:
