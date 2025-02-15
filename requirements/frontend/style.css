@@ -378,3 +378,75 @@ button:hover {
 #morpion-retour:hover {
     background-image: linear-gradient(45deg, #3b2db6, #7379d867);
 }
+
+/* Style pour la section de sélection de la langue */
+.language-selector {
+    background-color: #434788; /* Correspond au fond de la section */
+    border-radius: 20px; /* Correspond au rayon des bordures de .content */
+    padding: 15px; /* Ajoute de l'espace autour du dropdown */
+    width: 90%; /* Même largeur que les boutons */
+    margin-bottom: 20px;
+    box-shadow: 0 6px 25px rgba(137, 165, 255, 0.6); /* Ombre portée pour correspondre à la section */
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    margin: 0 auto; /* Centre le conteneur */
+}
+
+/* Style pour le label du choix de langue */
+.language-selector label {
+    font-size: 20px;
+    color: aliceblue; /* Même couleur que le texte de la section */
+    margin-bottom: 10px;
+}
+
+/* Style pour le dropdown du choix de langue */
+#language-selector {
+    background-color: #f8f9fa; /* Fond clair pour le dropdown */
+    color: #434788; /* Texte sombre pour contraster avec le fond */
+    border: 2px solid #007bff; /* Bordure bleue pour correspondre aux accents de la page */
+    border-radius: 12px; /* Coins arrondis */
+    font-size: 16px;
+    padding: 12px 30px 12px 20px; /* Augmenter l'espace à droite pour laisser plus de place à la flèche */
+    width: 100%; /* Prendre toute la largeur disponible */
+    box-sizing: border-box; /* Inclure le padding dans la largeur totale */
+    min-width: 200px; /* Ajouter une largeur minimale pour éviter le chevauchement */
+    transition: all 0.3s ease; /* Effet de transition au survol/focus */
+    text-align: center; /* Centrer le texte dans le menu déroulé */
+}
+
+/* Effet au survol et au focus, accentué */
+#language-selector:hover,
+#language-selector:focus {
+    background-color: #d1e7ff; /* Fond plus clair au survol */
+    border-color: #0056b3; /* Bordure bleue plus foncée */
+    box-shadow: 0px 0px 20px rgba(0, 123, 255, 0.7); /* Ombre plus accentuée */
+    transform: scale(1.05); /* Légère mise à l'échelle pour donner de l'impact */
+}
+
+/* Effet de focus uniquement après sélection */
+.language-selector:focus-within #language-selector {
+    background-color: #f8f9fa; /* Retour au fond clair après sélection */
+    border-color: #007bff; /* Maintien de la bordure bleue */
+    box-shadow: 0px 0px 10px rgba(0, 123, 255, 0.3); /* Moins d'ombre au focus */
+    transform: none; /* Annule l'effet de mise à l'échelle */
+}
+
+/* Réactive le survol après avoir sélectionné un élément */
+#language-selector:focus:hover {
+    background-color: #d1e7ff; /* Réactive l'effet de survol */
+    border-color: #0056b3; /* Réactive la bordure sur survol */
+    box-shadow: 0px 0px 20px rgba(0, 123, 255, 0.7); /* Ombre au survol */
+    transform: scale(1.05); /* Réactive la mise à l'échelle */
+}
+
+/* Pour s'assurer que le texte et la flèche n'empiètent pas l'un sur l'autre */
+#language-selector::-ms-expand {
+    display: none; /* Cache la flèche pour les navigateurs qui ne supportent pas le personnalisable dropdown */
+}
+
+/* Ajustement des options du dropdown */
+#language-selector option {
+    padding: 10px; /* Ajouter de l'espace pour chaque option */
+    text-align: center; /* Centrer le texte des options */
+}
