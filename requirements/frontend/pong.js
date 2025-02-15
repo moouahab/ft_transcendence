@@ -55,10 +55,9 @@ function initPongGame() {
     let player2Score = 0;
 
     // Fonction pour mettre à jour le score dans l'HTML
-    function updateScore()
-    {
+    function updateScore() {
         const scoreBoard = document.getElementById('scoreBoard');
-        scoreBoard.innerHTML = `Player 1 ${player1Score} : ${player2Score} Player 2 `;
+        scoreBoard.innerHTML = `${translations[currentLang]["player1"]} ${player1Score} : ${player2Score} ${translations[currentLang]["player2"]}`;
     }
 
     function resetScore()

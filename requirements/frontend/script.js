@@ -1,3 +1,7 @@
+// Déclaration de la variable currentLang 
+let currentLang = localStorage.getItem('language') || 'fr'; // Par défault: 'fr'
+let translations = {};
+
 function showSection(sectionId) {
     // Masquer toutes les sections
     const sections = ['seConnecter', 'connexion', 'choix', 'choix-jeu', 'choix-compte', 'choix-social', 'choix-PONG', 'choix-player', 'choix-ia', 'choix-tournois', 'match-display', 'choix-morpion', 'game-morpion'];
@@ -38,29 +42,28 @@ form.addEventListener('submit', async (event) => {
     };
 
     try {
-      const response = await fetch('https://localhost:3000/api/api/signup/', {
-        method: 'POST',
-        headers: {
-          'Content-Type': 'application/json',
-        },
-        credentials: 'include', 
-        body: JSON.stringify(data)
-      });
-
-      if (response.ok)
-        {
-        const result = await response.json();
-        console.log('Succès :', result);
-        alert(result.message);
-        showSection('choix');
-      } else {
-        const errorData = await response.json();
-        console.error('Erreur :', errorData);
-        alert(errorData.message || 'Une erreur est survenue lors de la création du compte.');
-      }
+        const response = await fetch('https://localhost:3000/api/api/signup/', {
+          method: 'POST',
+          headers: {
+            'Content-Type': 'application/json',
+          },
+          credentials: 'include', 
+          body: JSON.stringify(data)
+        });
+      
+        if (response.ok) {
+          const result = await response.json();
+          console.log('Succès :', result);
+          alert(result.message);
+          showSection('choix');
+        } else {
+          const errorData = await response.json();
+          console.error('Erreur :', errorData);
+          alert(errorData.message || translations[currentLang]['account-creation-error']);
+        }
     } catch (error) {
-      console.error('Erreur inattendue :', error);
-      alert('Erreur inattendue. Vérifie ta connexion ou contacte l’admin.');
+        console.error('Erreur inattendue :', error);
+        alert(translations[currentLang]['unexpected-error']);
     }
 });
 
@@ -83,20 +86,20 @@ document.getElementById('loginForm').addEventListener('submit', async (event) =>
             credentials: 'include',
             body: JSON.stringify(data)
         });
-
+    
         if (response.ok) {
             const result = await response.json();
             console.log('Connexion réussie :', result);
-            alert('Connexion réussie !');
+            alert(translations[currentLang]['login-success']);
             showSection('choix'); // Rediriger vers le menu
         } else {
             const errorData = await response.json();
             console.error('Erreur de connexion :', errorData);
-            alert(errorData.message || 'Identifiants incorrects.');
+            alert(errorData.message || translations[currentLang]['incorrect-credentials']);
         }
     } catch (error) {
         console.error('Erreur inattendue :', error);
-        alert('Erreur inattendue. Vérifie ta connexion ou contacte l’admin.');
+        alert(translations[currentLang]['unexpected-error']);
     }
 });
 
@@ -154,13 +157,13 @@ function startTournament() {
 
     // Vérification si tous les champs sont remplis
     if (players.some(player => player === "")) {
-        alert("Tous les joueurs doivent avoir un nom!");
+        alert(translations[currentLang]["player-name-empty"]);
         return;
     }
 
     // Vérification que les noms des joueurs ne sont pas identiques
     if (new Set(players).size !== players.length) {
-        alert("Les noms des joueurs doivent être uniques!");
+        alert(translations[currentLang]["player-name-unique"]);
         return;
     }
 
@@ -193,14 +196,14 @@ function displayMatch() {
 
     // Match 1
     if (matches[0].winner) {
-        document.getElementById('match1-players').textContent = `${matches[0].winner} (Vainqueur)`;
+        document.getElementById('match1-players').textContent = `${matches[0].winner} (${translations[currentLang]["winner"]})`;
     } else {
         document.getElementById('match1-players').textContent = `${matches[0].player1} vs ${matches[0].player2}`;
     }
 
     // Match 2
     if (matches[1].winner) {
-        document.getElementById('match2-players').textContent = `${matches[1].winner} (Vainqueur)`;
+        document.getElementById('match2-players').textContent = `${matches[1].winner} (${translations[currentLang]["winner"]})`;
     } else {
         document.getElementById('match2-players').textContent = `${matches[1].player1} vs ${matches[1].player2}`;
     }
@@ -209,18 +212,17 @@ function displayMatch() {
     if (matches[0].winner && matches[1].winner) {
         // Vérifier si le troisième match existe avant d'y accéder
         if (matches[2] && matches[2].winner) {
-            document.getElementById('final-players').textContent = `${matches[2].winner} (Vainqueur Final)`;
+            document.getElementById('final-players').textContent = `${matches[2].winner} (${translations[currentLang]["final-winner"]})`;
             document.getElementById('start-final').style.display = 'none'; // Masquer le bouton "Jouer" après la finale
         } else {
             document.getElementById('final-players').textContent = `${matches[0].winner} vs ${matches[1].winner}`;
             document.getElementById('start-final').style.display = 'inline';  // Afficher le bouton "Jouer" de la finale
         }
     } else {
-        document.getElementById('final-players').textContent = 'En attente des gagnants';
+        document.getElementById('final-players').textContent = translations[currentLang]["waiting-for-winners"];
         document.getElementById('start-final').style.display = 'none';  // Masquer le bouton tant que les gagnants ne sont pas connus
     }
 }
-
 
 // Fonction pour commencer un jeu Pong
 function startPongGame(matchIndex) {
@@ -310,4 +312,63 @@ function resetTournament() {
 // Fonction pour revenir au menu principal et réinitialiser le tournoi
 function goBackToMenu() {
     resetTournament();  // Réinitialiser le tournoi
+}
+
+// Gestion de la langue
+document.addEventListener("DOMContentLoaded", () => {
+    const languageSelector = document.getElementById("language-selector");
+  
+    // Récupérer les traductions depuis le fichier JSON
+    fetch("translations.json")
+        .then(response => response.json())
+        .then(data => {
+            translations = data; // Sauvegarde de translations dans la variable globale
+            applyTranslations(translations, currentLang); // Appliquer les traductions immédiatement
+  
+            // Définir le dropdown sur la langue actuelle
+            languageSelector.value = currentLang;
+  
+            // Gérer le changement de langue lorsque le dropdown est mis à jour
+            languageSelector.addEventListener("change", (event) => {
+                currentLang = event.target.value; // Mettre à jour la langue actuelle
+                localStorage.setItem("language", currentLang); // Enregistrer la préférence dans le localStorage
+                applyTranslations(translations, currentLang); // Appliquer la langue sélectionnée
+            });
+        })
+        .catch(error => console.error("Error loading translations:", error));
+  });
+
+// Fonction pour appliquer les traductions aux éléments avec des attributs data-i18n
+function applyTranslations(translations, lang) {
+    // Itérer sur tous les éléments avec l'attribut 'data-i18n'
+    document.querySelectorAll("[data-i18n]").forEach((element) => {
+        const key = element.getAttribute("data-i18n");
+
+        // Vérifier si la traduction existe pour la langue actuelle et la clé
+        if (translations[lang] && translations[lang][key]) {
+            // Si l'élément est un champ input avec un placeholder, appliquer la traduction
+            if (element.tagName.toLowerCase() === 'input' && element.hasAttribute("placeholder")) {
+                element.placeholder = translations[lang][key]; // Appliquer la traduction au placeholder
+            
+            // Si l'élément est un bouton contenant un span.info-comment, traduire les deux parties
+            } else if (element.tagName.toLowerCase() === 'button' && element.querySelector(".info-comment")) {
+                const infoComment = element.querySelector(".info-comment"); // Récupérer le span
+                
+                const buttonKey = key; // Clé pour le texte principal du bouton
+                const commentKey = infoComment.getAttribute("data-i18n"); // Clé pour le texte du span
+
+                // Vérifier si une traduction existe pour le texte du span.info-comment
+                if (translations[lang][commentKey]) {
+                    infoComment.textContent = translations[lang][commentKey]; // Appliquer la traduction au span
+                }
+
+                // Appliquer la traduction au texte principal du bouton
+                element.innerHTML = `${translations[lang][buttonKey]} <br><span class="info-comment" data-i18n="${commentKey}">${infoComment.textContent}</span>`;
+            
+            // Sinon, appliquer la traduction normalement
+            } else {
+                element.textContent = translations[lang][key];
+            }
+        }
+    });
 }
