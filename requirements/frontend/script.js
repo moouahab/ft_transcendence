@@ -1,7 +1,3 @@
-// Déclaration de la variable currentLang 
-let currentLang = localStorage.getItem('language') || 'fr'; // Par défault: 'fr'
-let translations = {};
-
 function showSection(sectionId) {
     // Masquer toutes les sections
     const sections = ['seConnecter', 'connexion', 'choix', 'choix-jeu', 'choix-compte', 'choix-social', 'choix-PONG', 'choix-player', 'choix-ia', 'choix-tournois', 'match-display', 'choix-morpion', 'game-morpion'];
@@ -313,6 +309,10 @@ function resetTournament() {
 function goBackToMenu() {
     resetTournament();  // Réinitialiser le tournoi
 }
+
+// Déclaration des variables pour le support de langue
+let currentLang = localStorage.getItem('language') || 'fr'; // Par défault: 'fr'
+let translations = {};
 
 // Gestion de la langue
 document.addEventListener("DOMContentLoaded", () => {
