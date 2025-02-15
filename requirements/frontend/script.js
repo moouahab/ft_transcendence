@@ -88,7 +88,7 @@ document.getElementById('loginForm').addEventListener('submit', async (event) =>
             const result = await response.json();
             console.log('Connexion réussie :', result);
             alert('Connexion réussie !');
-            showSection('choix'); // Rediriger vers le menu
+            showSection('choix');
         } else {
             const errorData = await response.json();
             console.error('Erreur de connexion :', errorData);
@@ -185,9 +185,9 @@ function shuffle(array) {
     }
     return array;
 }
+
 // Fonction pour afficher les matchs
 function displayMatch() {
-    // Masquer la section des choix de tournoi
     document.getElementById('match-display').style.display = 'block';
     document.getElementById('choix-tournois').style.display = 'none';
 
@@ -310,4 +310,67 @@ function resetTournament() {
 // Fonction pour revenir au menu principal et réinitialiser le tournoi
 function goBackToMenu() {
     resetTournament();  // Réinitialiser le tournoi
+}
+
+// Déclaration des variables pour le support de langue
+let currentLang = localStorage.getItem('language') || 'fr'; // Par défault: 'fr'
+let translations = {};
+
+// Gestion de la langue
+document.addEventListener("DOMContentLoaded", () => {
+    const languageSelector = document.getElementById("language-selector");
+  
+    // Récupérer les traductions depuis le fichier JSON
+    fetch("translations.json")
+        .then(response => response.json())
+        .then(data => {
+            translations = data; // Sauvegarde de translations dans la variable globale
+            applyTranslations(translations, currentLang); // Appliquer les traductions immédiatement
+  
+            // Définir le dropdown sur la langue actuelle
+            languageSelector.value = currentLang;
+  
+            // Gérer le changement de langue lorsque le dropdown est mis à jour
+            languageSelector.addEventListener("change", (event) => {
+                currentLang = event.target.value; // Mettre à jour la langue actuelle
+                localStorage.setItem("language", currentLang); // Enregistrer la préférence dans le localStorage
+                applyTranslations(translations, currentLang); // Appliquer la langue sélectionnée
+            });
+        })
+        .catch(error => console.error("Error loading translations:", error));
+  });
+
+// Fonction pour appliquer les traductions aux éléments avec des attributs data-i18n
+function applyTranslations(translations, lang) {
+    // Itérer sur tous les éléments avec l'attribut 'data-i18n'
+    document.querySelectorAll("[data-i18n]").forEach((element) => {
+        const key = element.getAttribute("data-i18n");
+
+        // Vérifier si la traduction existe pour la langue actuelle et la clé
+        if (translations[lang] && translations[lang][key]) {
+            // Si l'élément est un champ input avec un placeholder, appliquer la traduction
+            if (element.tagName.toLowerCase() === 'input' && element.hasAttribute("placeholder")) {
+                element.placeholder = translations[lang][key]; // Appliquer la traduction au placeholder
+            
+            // Si l'élément est un bouton contenant un span.info-comment, traduire les deux parties
+            } else if (element.tagName.toLowerCase() === 'button' && element.querySelector(".info-comment")) {
+                const infoComment = element.querySelector(".info-comment"); // Récupérer le span
+                
+                const buttonKey = key; // Clé pour le texte principal du bouton
+                const commentKey = infoComment.getAttribute("data-i18n"); // Clé pour le texte du span
+
+                // Vérifier si une traduction existe pour le texte du span.info-comment
+                if (translations[lang][commentKey]) {
+                    infoComment.textContent = translations[lang][commentKey]; // Appliquer la traduction au span
+                }
+
+                // Appliquer la traduction au texte principal du bouton
+                element.innerHTML = `${translations[lang][buttonKey]} <br><span class="info-comment" data-i18n="${commentKey}">${infoComment.textContent}</span>`;
+            
+            // Sinon, appliquer la traduction normalement
+            } else {
+                element.textContent = translations[lang][key];
+            }
+        }
+    });
 }

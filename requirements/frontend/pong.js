@@ -58,7 +58,7 @@ function initPongGame() {
     function updateScore()
     {
         const scoreBoard = document.getElementById('scoreBoard');
-        scoreBoard.innerHTML = `Player 1 ${player1Score} : ${player2Score} Player 2 `;
+        scoreBoard.innerHTML = `${translations[currentLang]["player1"]} ${player1Score} : ${player2Score} ${translations[currentLang]["player2"]}`;
     }
 
     function resetScore()
@@ -138,16 +138,16 @@ function initPongGame() {
             if (player1Score === 3)
             {
                 gameOver = true; // Empêche que cela se répète
-                document.getElementById('choix-jeu').style.display = 'block'; // Affiche la section
                 document.getElementById('choix-PONG').style.display = 'none'; // Cache le jeu
+                showSection('choix-jeu');
                 resetScore();
                 return true; // Stopper l'animation
             }
             if (player2Score === 3)
             {
                 gameOver = true; // Empêche que cela se répète
-                document.getElementById('choix-jeu').style.display = 'block'; // Affiche la section
                 document.getElementById('choix-PONG').style.display = 'none'; // Cache le jeu
+                showSection('choix-jeu');
                 resetScore();
                 return true; // Stopper l'animation
             }
@@ -156,16 +156,16 @@ function initPongGame() {
         {
             if (player1Score === 3) {
                 gameOver = true;
-                document.getElementById('match-display').style.display = 'block';
                 document.getElementById('choix-PONG').style.display = 'none';
+                showSection('match-display');
                 resetScore();
                 finishMatch(currentMatchIndex, "Player 1");
                 return true;
             }
             if (player2Score === 3) {
                 gameOver = true;
-                document.getElementById('match-display').style.display = 'block';
                 document.getElementById('choix-PONG').style.display = 'none';
+                showSection('match-display');
                 resetScore();
                 finishMatch(currentMatchIndex, "Player 2");
                 return true;
