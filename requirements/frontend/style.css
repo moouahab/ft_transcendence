@@ -448,5 +448,5 @@ button:hover {
 /* Ajustement des options du dropdown */
 #language-selector option {
     padding: 10px; /* Ajouter de l'espace pour chaque option */
-    text-align: center; /* Centrer le texte des options */
+    text-align: left; /* Centrer le texte des options */
 }
