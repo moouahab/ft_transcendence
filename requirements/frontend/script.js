@@ -1,6 +1,6 @@
 function showSection(sectionId) {
     // Masquer toutes les sections
-    const sections = ['seConnecter', 'connexion', 'choix', 'choix-jeu', 'choix-compte', 'choix-social', 'choix-PONG', 'choix-player', 'choix-ia', 'choix-tournois', 'match-display', 'choix-morpion', 'game-morpion'];
+    const sections = ['seConnecter', 'connexion', 'choix', 'choix-jeu', 'choix-compte', 'choix-PONG', 'choix-player', 'choix-ia', 'choix-tournois', 'match-display', 'choix-morpion', 'game-morpion'];
     sections.forEach(section => {
         document.getElementById(section).style.display = 'none';
     });
@@ -70,9 +70,10 @@ document.getElementById('loginForm').addEventListener('submit', async (event) =>
     // Récupération des données du formulaire
     const email = event.target.querySelector('input[name="email"]').value;
     const password = event.target.querySelector('input[name="password"]').value;
+    console.log(email, password)
 
     // Création de l'objet de connexion
-    const data = { username: email, password: password };
+    const data = { email: email, password: password };
 
     try {
         const response = await fetch('https://localhost:3000/api/api/login/', {
@@ -124,9 +125,11 @@ document.getElementById('button-compte').addEventListener('click', function() {
     showSection('choix-compte'); // Afficher la section du compte
 });
 
-document.getElementById('button-social').addEventListener('click', function() {
-    showSection('choix-social'); // Afficher la section du social
+document.getElementById('logoutButton').addEventListener('click', function() {
+    if (isUserAuthenticated())
+        init();// Afficher la section du compte
 });
+
 
 document.addEventListener("DOMContentLoaded", () =>
 {
@@ -374,3 +377,46 @@ function applyTranslations(translations, lang) {
         }
     });
 }
+
+
+function init()  { 
+    document.getElementById("logoutButton").addEventListener("click", () => {
+        fetch("https://localhost:3000/api/api/logout/", {
+        method: "POST",
+        credentials: "include",
+        })
+        .then(async (response) => {
+            const data = await response.json();
+            console.error(data);
+            if (!response.ok) {
+            throw new Error(data.message || "Erreur lors de la déconnexion");
+            }
+            // Déconnexion réussie : redirection ou message
+            console.log("Déconnexion réussie :", data.message);
+            window.location.hash = "#seConnecter";
+        })
+        .catch((error) => {
+            console.error("Erreur lors de la déconnexion :", error);
+            alert(error.message);
+        });
+    });
+}
+
+    async function isUserAuthenticated() {
+    try {
+      const response = await fetch("https://localhost/api/api/check-token/", {
+        method: "GET",
+        credentials: "include", // Inclure les cookies pour vérifier le token
+      });
+  
+      if (response.ok) {
+        return true; // Utilisateur connecté
+      } else {
+        return false; // Utilisateur non connecté
+      }
+    } catch (error) {
+      console.error("Erreur lors de la vérification du token :", error);
+      return false;
+    }
+  }
+  
