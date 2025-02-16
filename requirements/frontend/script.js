@@ -25,7 +25,7 @@ function showSection(sectionId) {
 const form = document.getElementById('signupForm');
 
 form.addEventListener('submit', async (event) => {
-    event.preventDefault(); // Empêche le rechargement de la page
+    event.preventDefault();
 
     // Récupération des données du formulaire
     const pseudo = form.querySelector('input[name="pseudo"]').value;
@@ -50,7 +50,8 @@ form.addEventListener('submit', async (event) => {
       if (response.ok)
         {
         const result = await response.json();
-        console.log('Succès :', result);
+        localStorage.setItem('username', result.username);
+        console.log('Succès :', result.username);
         alert(result.message);
         showSection('choix');
       } else {
@@ -87,6 +88,7 @@ document.getElementById('loginForm').addEventListener('submit', async (event) =>
 
         if (response.ok) {
             const result = await response.json();
+            localStorage.setItem('username', result.username);
             console.log('Connexion réussie :', result);
             alert('Connexion réussie !');
             showSection('choix');
@@ -133,6 +135,8 @@ document.getElementById('logoutButton').addEventListener('click', function() {
 
 document.addEventListener("DOMContentLoaded", () =>
 {
+    const infoCompte = document.getElementById("first");
+    infoCompte.innerHTML = localStorage.getItem('username');
     if (window.location.hash === "#choix-PONG")
     {
         initPongGame();
@@ -280,12 +284,6 @@ function finishMatch(matchIndex, winner) {
     displayMatch();
 }
 
-// Exemple d'initialisation du jeu Pong
-function initPongGame() {
-    // Cette fonction va lancer le jeu Pong. Ici, il peut être lié à un code spécifique pour Pong.
-    console.log('Le jeu Pong commence!');
-}
-
 // Fonction pour réinitialiser le tournoi
 function resetTournament() {
     // Réinitialiser les variables du tournoi
@@ -420,3 +418,16 @@ function init()  {
     }
   }
   
+  document.getElementById("avatar-upload").addEventListener("change", function(event) {
+    const file = event.target.files[0]; // Récupère le premier fichier sélectionné
+    if (file) {
+        const reader = new FileReader();
+        
+        reader.onload = function(e) {
+            // Met à jour l'image de l'avatar avec l'image téléchargée
+            document.getElementById("avatar-image").src = e.target.result;
+        };
+        
+        reader.readAsDataURL(file); // Convertit l'image en URL et la charge dans l'élément <img>
+    }
+});

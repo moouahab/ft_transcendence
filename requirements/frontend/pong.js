@@ -2,6 +2,7 @@ let ia = false;
 let lastIaUpdate = Date.now();
 let speedFactor = 5;
 var isTournament = false;
+const player1Name = localStorage.getItem('username');
 
 function initPongGame() {
     const scene = new THREE.Scene();

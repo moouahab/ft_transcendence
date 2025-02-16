@@ -32,7 +32,8 @@ class SignupView(APIView):
                 response = Response({
                     "message": "Utilisateur créé avec succès. Veuillez confirmer votre email.",
                     "access_token": tokens["access"],
-                    "refresh_token": tokens["refresh"]
+                    "refresh_token": tokens["refresh"],
+                    "username": user.username,
                 }, status=status.HTTP_201_CREATED)
 
                 # Stocker les tokens dans les cookies

@@ -25,13 +25,13 @@ services:
     ports:
       - "8000:8000"
     volumes:
-      - ./requirements/backend/jwt2fa:/app
+      - ./requirements/backend/jwt2fa:/jwt2fa
     command: >
       sh -c "sleep 3 &&
             python manage.py makemigrations &&
             python manage.py migrate &&
             python create_superuser.py &&
-            gunicorn jwt2fa.wsgi:application --bind 0.0.0.0:8000 --workers=4"
+            gunicorn jwt2fa.wsgi:application --bind 0.0.0.0:8000 --workers=4 --reload"
     networks:
       - transcendence
 
