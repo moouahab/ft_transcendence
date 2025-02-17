@@ -22,7 +22,6 @@ def get_vault_secret(path):
         response = client.secrets.kv.read_secret_version(path=path)
         return response['data']['data']
     except Exception as e:
-        print(f"[WARNING] Impossible de lire le secret '{path}' depuis Vault : {e}")
         return {}
 
 

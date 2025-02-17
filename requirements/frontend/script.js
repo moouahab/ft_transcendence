@@ -396,13 +396,13 @@ function init()  {
     try {
       const response = await fetch("https://localhost:3000/api/api/check-token/", {
         method: "GET",
-        credentials: "include", // Inclure les cookies pour vérifier le token
+        credentials: "include",
       });
   
       if (response.ok) {
-        return true; // Utilisateur connecté
+        return true;
       } else {
-        return false; // Utilisateur non connecté
+        return false;
       }
     } catch (error) {
       console.error("Erreur lors de la vérification du token :", error);

@@ -29,9 +29,8 @@ def get_vault_secret(path):
     """
     try:
         response = client.secrets.kv.read_secret_version(path=path)
-        return response['data']['data']  # le dict contenant les clés
+        return response['data']['data']
     except Exception as e:
-        print(f"[WARNING] Impossible de lire le secret '{path}' depuis Vault : {e}")
         return {}
 
 # ---------------------
@@ -185,19 +184,19 @@ EMAIL_HOST_PASSWORD = vault_email.get('EMAIL_HOST_PASSWORD', os.getenv('EMAIL_HO
 MEDIA_URL = '/media/'
 MEDIA_ROOT = os.path.join(BASE_DIR, 'media')
 
-LOGGING = {
-    'version': 1,
-    'disable_existing_loggers': False,
-    'handlers': {
-        'console': {
-            'class': 'logging.StreamHandler',
-        },
-    },
-    'root': {
-        'handlers': ['console'],
-        'level': 'DEBUG',
-    },
-}
+# LOGGING = {
+#     'version': 1,
+#     'disable_existing_loggers': False,
+#     'handlers': {
+#         'console': {
+#             'class': 'logging.StreamHandler',
+#         },
+#     },
+#     'root': {
+#         'handlers': ['console'],
+#         'level': 'DEBUG',
+#     },
+# }
 
 REST_FRAMEWORK = {
     'DEFAULT_PARSER_CLASSES': [
