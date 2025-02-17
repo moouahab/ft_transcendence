@@ -292,8 +292,78 @@ input[type="file"] {
     background-color: #4CAF50; /* Changer la couleur */
     border-color: #4CAF50;
 }
+/* Historique Section */
+.historique-section {
+    font-size: 12px;
+    color: white;
+    margin-top: 15px;
+}
 
+.historique-section h2 {
+    margin-top: 30px;
+    margin-bottom: 30px;
+    text-shadow: 5px 4px 6px rgb(72, 138, 224);  /* Ombre légère */
+}
 
+/* Container pour les deux historiques */
+.historique-info-container {
+    display: flex;
+    justify-content: space-between;
+    gap: 20px;
+}
+
+/* Historique pour chaque jeu */
+.historique-info {
+    flex: 1;
+}
+
+/* Ligne de séparation entre les deux jeux */
+.separation-line {
+    width: 1px;
+    background-color: white;
+    height: 100%;
+    margin: 0 10px;
+}
+
+/* Style des titres des jeux */
+h3 {
+    font-size: 16px;
+    margin-bottom: 10px;
+}
+
+/* Style des éléments de comptage */
+.match-count {
+    font-weight: bold;
+    display: block; /* Permet au chiffre de s'afficher sur une nouvelle ligne */
+    margin-top: 5px; /* Espacement entre le texte et le chiffre */
+    font-size: 16px; /* Taille des chiffres */
+}
+
+/* Alignement des éléments sous chaque label */
+.historique-info p {
+    margin-bottom: 5px;
+    font-size: 14px; /* Taille de la police des textes */
+}
+
+/* Centrer le contenu */
+.historique-info span {
+    margin-bottom: 5px;
+    display: block;
+    text-align: center;
+}
+
+/* Pour la responsivité */
+@media (max-width: 768px) {
+    .historique-info-container {
+        flex-direction: column; /* Empile les éléments verticalement sur petits écrans */
+        align-items: center;
+    }
+
+    .separation-line {
+        width: 100%; /* La ligne de séparation devient pleine largeur sur petits écrans */
+        margin: 10px 0;
+    }
+}
 
 /* Section Tournois */
 

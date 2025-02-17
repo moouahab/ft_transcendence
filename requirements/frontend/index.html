@@ -191,6 +191,33 @@
             <input type="text" id="username" placeholder="Pseudo" data-i18n="username-placeholder">
             <button id="save-account" data-i18n="save-account-button">Sauvegarder</button>
         </form>
+        
+         <!-- Historique des matchs -->
+        <div class="historique-section">
+            <h2 data-i18n="histo">Historique des matchs</h2>
+
+            <div class="historique-info-container">
+                <!-- Historique du jeu Pong -->
+                <div class="historique-info">
+                    <h3>Pong</h3>
+                    <p id="victory-pong"><span data-i18n="mvictory">Matchs gagnés :</span></p>
+                    <span id="match-win-pong" class="match-count">0</span> <!-- Le chiffre est maintenant en dessous -->
+                    <p id="lost-pong"><span data-i18n="mlost">Matchs perdus :</span></p>
+                    <span id="match-loss-pong" class="match-count">0</span> <!-- Le chiffre est maintenant en dessous -->
+                </div>
+
+                <div class="separation-line"></div> <!-- Ligne de séparation -->
+
+                <!-- Historique du jeu Morpion -->
+                <div class="historique-info">
+                    <h3>Morpion</h3>
+                    <p id="victory-morpion"><span data-i18n="mvictory">Matchs gagnés :</span></p>
+                    <span id="match-win-morpion" class="match-count">0</span> <!-- Le chiffre est maintenant en dessous -->
+                    <p id="lost-morpion"><span data-i18n="mlost">Matchs perdus :</span></p>
+                    <span id="match-loss-morpion" class="match-count">0</span> <!-- Le chiffre est maintenant en dessous -->
+                </div>
+            </div>
+        </div>
     </div>
 
     <!-- Section PONG -->

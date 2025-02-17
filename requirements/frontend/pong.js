@@ -142,6 +142,7 @@ function initPongGame() {
                 document.getElementById('choix-PONG').style.display = 'none'; // Cache le jeu
                 showSection('choix-jeu');
                 resetScore();
+                updateMatchHistory("win");
                 return true; // Stopper l'animation
             }
             if (player2Score === 3)
@@ -150,6 +151,7 @@ function initPongGame() {
                 document.getElementById('choix-PONG').style.display = 'none'; // Cache le jeu
                 showSection('choix-jeu');
                 resetScore();
+                updateMatchHistory("loss");
                 return true; // Stopper l'animation
             }
         }

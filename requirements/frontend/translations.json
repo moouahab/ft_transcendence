@@ -62,7 +62,10 @@
         "final-winner": "Vainqueur Final",
         "waiting-for-winners": "En attente des gagnants",
         "player1": "Joueur 1",
-        "player2": "Joueur 2"
+        "player2": "Joueur 2",
+        "histo": "Historique des matchs",
+        "mvictory": "Match gagnés",
+        "mlost": "Matchs perdus"
     },
     "en": {
         "welcome-title": "Welcome",
@@ -127,7 +130,10 @@
         "final-winner": "Final Winner",
         "waiting-for-winners": "Waiting for the winners",
         "player1": "Player 1",
-        "player2": "Player 2"
+        "player2": "Player 2",
+        "histo": "Match history",
+        "mvictory": "Games won",
+        "mlost": "Games lost"
     },
     "es": {
         "welcome-title": "Bienvenido",
@@ -192,6 +198,9 @@
         "final-winner": "Ganador Final",
         "waiting-for-winners": "Esperando a los ganadores",
         "player1": "Jugador 1",
-        "player2": "Jugador 2"
+        "player2": "Jugador 2",
+        "histo": "Puntuaciones de partidos",
+        "mvictory": "Partidos ganados",
+        "mlost": "Partidos perdidos"
     }
 }

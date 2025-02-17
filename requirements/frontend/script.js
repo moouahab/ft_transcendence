@@ -137,6 +137,7 @@ document.addEventListener("DOMContentLoaded", () =>
 {
     const infoCompte = document.getElementById("first");
     infoCompte.innerHTML = localStorage.getItem('username');
+
     if (window.location.hash === "#choix-PONG")
     {
         initPongGame();
@@ -431,3 +432,78 @@ function init()  {
         reader.readAsDataURL(file); // Convertit l'image en URL et la charge dans l'élément <img>
     }
 });
+
+
+let matchWinsPong = 0;
+let matchLossesPong = 0;
+
+// Mettre à jour les couleurs selon les valeurs
+function updateMatchColors() {
+    const winElement = document.getElementById('match-win-pong');
+    const lossElement = document.getElementById('match-loss-pong');
+    
+    // Mettre à jour la couleur des victoires
+    if (matchWinsPong > 0) {
+        winElement.style.color = 'green';
+    } else {
+        winElement.style.color = 'white'; // La couleur par défaut si 0
+    }
+    
+    // Mettre à jour la couleur des défaites
+    if (matchLossesPong > 0) {
+        lossElement.style.color = 'red';
+    } else {
+        lossElement.style.color = 'white'; // La couleur par défaut si 0
+    }
+}
+
+
+function updateMatchHistory(type) {
+    if (type === 'win') {
+        matchWinsPong++;
+        document.getElementById('match-win-pong').textContent = matchWinsPong;
+    } else if (type === 'loss') {
+        matchLossesPong++;
+        document.getElementById('match-loss-pong').textContent = matchLossesPong;
+    }
+
+    // Mettre à jour les couleurs après avoir modifié les chiffres
+    updateMatchColors();
+}
+
+let matchWinsMorpion = 0;
+let matchLossesMorpion = 0;
+
+// Mettre à jour les couleurs selon les valeurs
+function updateMatchColorsMorpion() {
+    const winElement = document.getElementById('match-win-morpion');
+    const lossElement = document.getElementById('match-loss-morpion');
+    
+    // Mettre à jour la couleur des victoires
+    if (matchWinsMorpion > 0) {
+        winElement.style.color = 'green';
+    } else {
+        winElement.style.color = 'white'; // La couleur par défaut si 0
+    }
+    
+    // Mettre à jour la couleur des défaites
+    if (matchLossesMorpion > 0) {
+        lossElement.style.color = 'red';
+    } else {
+        lossElement.style.color = 'white'; // La couleur par défaut si 0
+    }
+}
+
+
+function updateMatchHistoryMorpion(type) {
+    if (type === 'win') {
+        matchWinsMorpion++;
+        document.getElementById('match-win-morpion').textContent = matchWinsMorpion;
+    } else if (type === 'loss') {
+        matchLossesMorpion++;
+        document.getElementById('match-loss-morpion').textContent = matchLossesMorpion;
+    }
+
+    // Mettre à jour les couleurs après avoir modifié les chiffres
+    updateMatchColorsMorpion();
+}

@@ -5,6 +5,7 @@ let gameOver = false;  // Variable pour savoir si le jeu est terminé
 // Fonction pour démarrer le jeu
 function startMorpion() {
   // Affiche la zone du jeu et masque la section de choix
+  document.getElementById('morpion-retour').style.display = 'none';
   showSection('game-morpion');
   
   // Réinitialise l'état du jeu
@@ -54,7 +55,14 @@ function checkWinner() {
     const [a, b, c] = combo;
     if (board[a] && board[a] === board[b] && board[a] === board[c]) {
       gameOver = true;
-      alert(`${currentPlayer === 'X' ? 'X' : 'O'} a gagné !`);
+      // Déterminer le gagnant et mettre à jour l'historique
+      if (currentPlayer === 'X') {
+        alert('X a gagné !');
+        updateMatchHistoryMorpion('win'); // Met à jour les victoires de X
+      } else {
+        alert('O a gagné !');
+        updateMatchHistoryMorpion('loss'); // Met à jour les défaites de X
+      }
       document.getElementById(`morpion-retour`).style.display = 'block';
       return;
     }
