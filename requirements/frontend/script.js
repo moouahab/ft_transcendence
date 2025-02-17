@@ -1,6 +1,6 @@
 function showSection(sectionId) {
     // Masquer toutes les sections
-    const sections = ['seConnecter', 'connexion', 'choix', 'choix-jeu', 'choix-compte', 'choix-PONG', 'choix-player', 'choix-ia', 'choix-tournois', 'match-display', 'choix-morpion', 'game-morpion'];
+    const sections = ['seConnecter', 'opt','connexion', 'choix', 'choix-jeu', 'choix-compte', 'choix-PONG', 'choix-player', 'choix-ia', 'choix-tournois', 'match-display', 'choix-morpion', 'game-morpion'];
     sections.forEach(section => {
         document.getElementById(section).style.display = 'none';
     });
@@ -67,41 +67,55 @@ form.addEventListener('submit', async (event) => {
 
 document.getElementById('loginForm').addEventListener('submit', async (event) => {
     event.preventDefault();
-
+  
     // Récupération des données du formulaire
     const email = event.target.querySelector('input[name="email"]').value;
     const password = event.target.querySelector('input[name="password"]').value;
-    console.log(email, password)
-
+    console.log(email, password);
+  
     // Création de l'objet de connexion
     const data = { email: email, password: password };
-
+  
     try {
-        const response = await fetch('https://localhost:3000/api/api/login/', {
-            method: 'POST',
-            headers: {
-                'Content-Type': 'application/json',
-            },
-            credentials: 'include',
-            body: JSON.stringify(data)
-        });
-
-        if (response.ok) {
-            const result = await response.json();
-            localStorage.setItem('username', result.username);
-            console.log('Connexion réussie :', result);
-            alert('Connexion réussie !');
-            showSection('choix');
-        } else {
-            const errorData = await response.json();
-            console.error('Erreur de connexion :', errorData);
-            alert(errorData.message || 'Identifiants incorrects.');
+      const response = await fetch('https://localhost:3000/api/api/login/', {
+        method: 'POST',
+        headers: {
+          'Content-Type': 'application/json',
+        },
+        credentials: 'include',
+        body: JSON.stringify(data)
+      });
+  
+      const result = await response.json();
+  
+      if (response.ok) {
+        // Si le backend renvoie des tokens, c'est que l'utilisateur n'a pas activé la 2FA
+        if (result.access_token) {
+          localStorage.setItem('username', result.username);
+          alert('Connexion réussie !');
+          showSection('choix');
         }
+        // Sinon, on considère que la 2FA est activée et qu'un OTP a été envoyé
+        else if (result.message && result.message.includes('OTP')) {
+          // On peut pré-remplir l'email dans le formulaire OTP si besoin
+          document.getElementById('otpEmail').value = email;
+          alert(result.message);
+          showSection('opt');
+        } else {
+          // Dans le cas contraire, on affiche le message du backend
+          console.log(result.message);
+          alert(result.message);
+        }
+      } else {
+        console.error('Erreur de connexion :', result);
+        alert(result.message || 'Identifiants incorrects.');
+      }
     } catch (error) {
-        console.error('Erreur inattendue :', error);
-        alert('Erreur inattendue. Vérifie ta connexion ou contacte l’admin.');
+      console.error('Erreur inattendue :', error);
+      alert('Erreur inattendue. Vérifie ta connexion ou contacte l’admin.');
     }
-});
+  });
+  
 
 
 // Gérer les changements d'historique (par exemple, lorsque l'utilisateur utilise le bouton retour)
@@ -131,6 +145,12 @@ document.getElementById('logoutButton').addEventListener('click', function() {
     if (isUserAuthenticated())
         init();// Afficher la section du compte
 });
+
+document.getElementById('opt').addEventListener('click', function() {
+    OTPView();
+});
+
+
 
 
 document.addEventListener("DOMContentLoaded", () =>
@@ -498,3 +518,65 @@ function updateMatchHistoryMorpion(type) {
     // Mettre à jour les couleurs après avoir modifié les chiffres
     updateMatchColorsMorpion();
 }
+
+
+
+
+
+function OTPView() {
+    const form = document.getElementById('otpForm');
+    const responseElement = document.getElementById("response");
+  
+    // 1. Fonction pour afficher des messages stylés (similaire au signup)
+    function showMessage(message, type, duration = 3000) {
+      // Définir le contenu et la classe
+      responseElement.textContent = message;
+      responseElement.className = ""; // Réinitialise toutes les classes
+      responseElement.classList.add(type); // success, error, info, etc.
+  
+      // Afficher le message
+      responseElement.style.display = "block";
+      responseElement.style.opacity = "1";
+  
+      // Masquer automatiquement après un certain délai
+      setTimeout(() => {
+        responseElement.style.opacity = "0";
+        setTimeout(() => {
+          responseElement.style.display = "none";
+        }, 500);
+      }, duration);
+    }
+    
+    form.addEventListener('submit', function(e) {
+      e.preventDefault();
+    
+      const email = document.getElementById('otpEmail').value;
+      const otp_code = document.getElementById('otpCode').value;
+      const data = { email, otp_code };
+    
+      fetch('https://localhost:3000/api/api/verify-otp/', {
+        method: 'POST',
+        headers: {
+          'Content-Type': 'application/json',
+          'Accept': 'application/json'
+        },
+        credentials: 'include',
+        body: JSON.stringify(data)
+      })
+      .then(async (response) => {
+        const jsonData = await response.json();
+        if (!response.ok) {
+          throw new Error(jsonData.message || 'Erreur de vérification OTP');
+        }
+        return jsonData;
+    })
+    .then((data) => {
+        showMessage(data.message || 'Connexion réussie !', 'success');
+        showSection('choix');
+      })
+      .catch((error) => {
+        console.error('Erreur OTP:', error);
+        showMessage(error.message, 'error');
+      });
+    });
+  }

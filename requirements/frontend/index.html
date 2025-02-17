@@ -26,6 +26,25 @@
         </form>
     </div>
 
+    <div class="content" id="opt">
+        <form id="otpForm" class="form-container">
+            <div class="form-group">
+              <label>Email</label>
+              <input type="email" id="otpEmail" required />
+            </div>
+            <div class="form-group">
+              <label>Code OTP</label>
+              <input type="text" id="otpCode" required />
+            </div>
+            <div class="connect-btn">
+              <button type="submit" class="cancel-btn">Se connecter</button>
+              <a href="#" class="cancel-btn">Annuler</a>
+            </div>
+          </form>
+          
+          <div id="response"></div>
+    </div>
+
     <div class="content" id="seConnecter">
         <h1>Connexion</h1>
         <form id="loginForm" method="POST">

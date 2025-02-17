@@ -39,3 +39,13 @@ class SignupUserSerializer(serializers.ModelSerializer):
             password=validated_data['password'],
             profile_picture=validated_data.get('profile_picture')
         )
+
+    def update(self, instance, validated_data):
+        """
+        Permet la mise à jour du pseudo et de l'avatar.
+        """
+        instance.username = validated_data.get('username', instance.username)
+        if 'profile_picture' in validated_data:
+            instance.profile_picture = validated_data['profile_picture']
+        instance.save()
+        return instance
