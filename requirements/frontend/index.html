@@ -3,7 +3,7 @@
     <head>
         <meta charset="UTF-8">
         <meta name="viewport" content="width=device-width, initial-scale=1.0">
-        <title>Transcendence</title>
+        <title>Inscription</title>
         <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css">
         <link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Press+Start+2P&display=swap">
         <link rel="stylesheet" href="style.css">
@@ -23,6 +23,11 @@
             <input type="password" name="password" placeholder="Mot de passe" required>
             <input type="password" name="confirm_password" placeholder="Confirme ton mot de passe" required>
             <button type="submit">Se connecter</button>
+            <!-- 42 OAuth Login Button -->
+            <br>
+            <br>
+            <p>Ou</p>
+            <button id="42LoginButton">42 Authentification</button>
         </form>
     </div>
 
@@ -62,7 +67,9 @@
                 Mon Compte <br><span class="info-comment" data-i18n="account_info"> (Accédez à vos informations personnelles)</span>
             </button>
 
-            <button type="button" id="logoutButton" data-i18n="deconnexion">Déconnexion</button>
+            <button type="button" id="logoutButton" data-i18n="deconnexion">
+                Deconnexion
+            </button>
         </div>
     </div>
 
@@ -178,48 +185,20 @@
 
         <!-- Avatar -->
         <div class="avatar-container">
-            <img id="avatar-image" src="textures/img_avatar.png" alt="Avatar" class="avatar">
-            <input type="file" id="avatar-upload" accept="image/*" data-i18n="upload-avatar-button">
+            <img src="textures/img_avatar.png" alt="Avatar" class="avatar">
         </div>
-
-        <div class="infos-compte" id="first">Pseudonyme</div>
 
         <!-- Formulaire -->
         <form class="account-form">
             <input type="text" id="username" placeholder="Pseudo" data-i18n="username-placeholder">
+            <input type="password" id="password" placeholder="Mot de passe" data-i18n="password-placeholder">
             <button id="save-account" data-i18n="save-account-button">Sauvegarder</button>
         </form>
-        
-         <!-- Historique des matchs -->
-        <div class="historique-section">
-            <h2 data-i18n="histo">Historique des matchs</h2>
-
-            <div class="historique-info-container">
-                <!-- Historique du jeu Pong -->
-                <div class="historique-info">
-                    <h3>Pong</h3>
-                    <p id="victory-pong"><span data-i18n="mvictory">Matchs gagnés :</span></p>
-                    <span id="match-win-pong" class="match-count">0</span> <!-- Le chiffre est maintenant en dessous -->
-                    <p id="lost-pong"><span data-i18n="mlost">Matchs perdus :</span></p>
-                    <span id="match-loss-pong" class="match-count">0</span> <!-- Le chiffre est maintenant en dessous -->
-                </div>
-
-                <div class="separation-line"></div> <!-- Ligne de séparation -->
-
-                <!-- Historique du jeu Morpion -->
-                <div class="historique-info">
-                    <h3>Morpion</h3>
-                    <p id="victory-morpion"><span data-i18n="mvictory">Matchs gagnés :</span></p>
-                    <span id="match-win-morpion" class="match-count">0</span> <!-- Le chiffre est maintenant en dessous -->
-                    <p id="lost-morpion"><span data-i18n="mlost">Matchs perdus :</span></p>
-                    <span id="match-loss-morpion" class="match-count">0</span> <!-- Le chiffre est maintenant en dessous -->
-                </div>
-            </div>
-        </div>
     </div>
 
     <!-- Section PONG -->
     <div class="gameplay" id="choix-PONG">
+        <!-- Div pour afficher le score -->
         <div id="scoreBoard" data-i18n="score-display">Joueur 1 0 : 0 Joueur 2</div>
     </div>
 

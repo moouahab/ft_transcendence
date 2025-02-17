@@ -47,13 +47,13 @@ class LoginView(APIView):
                 }, status=status.HTTP_200_OK)
             else:
                 tokens = generate_tokens_for_user(user)
-                response = Response({ "message": f"Bienvenue, {user.username} !", "access_token": tokens["access"], "refresh_token": tokens["refresh"], "username": {user.username}
+                response = Response({ "message": f"Bienvenue, {user.username} !", "access_token": tokens["access"], "refresh_token": tokens["refresh"]
                 }, status=status.HTTP_200_OK)
                 secure = True
                 response.set_cookie(key="access", value=tokens["access"], httponly=True, secure=secure, samesite='Strict', max_age=86400000)
                 response.set_cookie(key="refresh", value=tokens["refresh"],  httponly=True, secure=secure, samesite='Strict')
                 logger.info(f"Tokens générés pour {user.email}")
-                return (response)
+                return response
         else:
             logger.warning(f"Tentative de login échouée pour l'email : {email}")
             return Response({"message": "Identifiants invalides."},

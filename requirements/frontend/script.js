@@ -21,6 +21,61 @@ function showSection(sectionId) {
     }
 }
 
+document.getElementById('42LoginButton').addEventListener('click', () => {
+    // Rediriger l'utilisateur vers l'URL de connexion OAuth de 42
+    const clientId = 'u-s4t2ud-7b376fa04eb4dbbae0a22f639c617337b61b1f36f74e8d66d01cfa8881b51821';
+    const redirectUri = 'https://localhost:3000/api/api/auth42/';
+    const authUrl = `https://api.intra.42.fr/oauth/authorize?client_id=${clientId}&redirect_uri=${redirectUri}&response_type=code`;
+
+    window.location.href = authUrl;  // Redirect to 42 OAuth authorization
+});
+
+// document.getElementById('42LoginButton').addEventListener('click', function() {
+//     // Rediriger l'utilisateur vers l'URL de connexion OAuth de 42
+//     window.location.href = 'https://api.intra.42.fr/oauth/authorize?client_id=u-s4t2ud-7b376fa04eb4dbbae0a22f639c617337b61b1f36f74e8d66d01cfa8881b51821&redirect_uri=https%3A%2F%2Flocalhost%3A3000%2Fapi%2Fapi%2Fauth42%2F&response_type=code';
+// });
+
+document.addEventListener("DOMContentLoaded", () => {
+    const urlParams = new URLSearchParams(window.location.search);
+    const code = urlParams.get('code');  // OAuth code returned by 42
+
+    if (code) {
+        exchangeCodeForTokens(code);
+    }
+});
+
+async function exchangeCodeForTokens(code) {
+    try {
+        const response = await fetch('https://localhost:3000/api/auth/42/callback', {
+            method: 'POST',
+            headers: {
+                'Content-Type': 'application/json',
+            },
+            body: JSON.stringify({ code }),
+        });
+
+        if (response.ok) {
+            const { access_token, refresh_token, username } = await response.json();
+
+            // Store tokens and username
+            localStorage.setItem('access_token', access_token);
+            localStorage.setItem('refresh_token', refresh_token);
+            localStorage.setItem('username', username);
+
+            console.log(`User ${username} logged in!`);
+            alert('Connexion réussie !');
+
+            // Redirect to game section or refresh page
+            showSection('choix');
+        } else {
+            console.error('OAuth callback error:', await response.json());
+            alert('Échec de l\'authentification. Veuillez réessayer.');
+        }
+    } catch (error) {
+        console.error('Erreur inattendue :', error);
+        alert('Erreur inattendue. Vérifie ta connexion ou contacte l’admin.');
+    }
+}
 
 const form = document.getElementById('signupForm');
 
