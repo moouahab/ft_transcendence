@@ -42,8 +42,48 @@ function initPongGame() {
 
     // Position de la caméra (légèrement inclinée pour une meilleure vue)
     camera.position.set(0, 6, 10);
-    // camera.position.set(0, 10, 0);
+    // camera.position.set(0, 10, 10);
     camera.lookAt(0, 0, 0);
+
+    //MICK START
+    // Position initiale de la caméra (avant que le jeu démarre)
+    camera.position.set(0, 0, 10);
+    camera.lookAt(0, 0, 0);
+
+    // Position finale désirée pour la caméra
+    // const targetPosition = new THREE.Vector3(0, 8, 8);
+    const targetPosition = new THREE.Vector3(0, 8, 0);
+
+    let startTime = null;
+
+    function animateCamera(timestamp) {
+        if (!startTime) startTime = timestamp; // Temps de départ
+
+        const elapsedTime = timestamp - startTime; // Temps depuis le lancement de l'animation
+        const duration = 1000; // temps total pour le mouvement (ms)
+
+        if (elapsedTime < duration) {
+            const progress = elapsedTime / duration;
+
+            // Interpolating between the initial position and the target position
+            camera.position.lerpVectors(new THREE.Vector3(0, 6, 10), targetPosition, progress);
+
+            // Optionally, you can also interpolate the camera's lookAt position
+            camera.lookAt(0, 0, 0);
+        } else {
+            // Once the animation is complete, ensure the camera is in the final position
+            camera.position.copy(targetPosition);
+            camera.lookAt(0, 0, 0); // Ensure it's still looking at the center
+        }
+
+        renderer.render(scene, camera); // Render the scene
+        requestAnimationFrame(animateCamera); // Loop the animation
+    }
+
+    // Demarrer l'anumation de la camera
+    requestAnimationFrame(animateCamera);
+
+    //MICK END
 
     // Plateau (plus large)
     const plateGeometry = new THREE.BoxGeometry(14, 0.1, 10);
@@ -69,7 +109,8 @@ function initPongGame() {
         updateScore();
     }
 
-    // Bordures horizontales (haut/bas) en rouge
+    // Bordures horizontales (haut/bas) en rouge MICK
+    // Bordures horizontales (haut/bas) en gris
     const bordHGeometry = new THREE.BoxGeometry(14, 0.5, 0.5);
     const bordHMaterial = new THREE.MeshStandardMaterial({ color: 0x434788 });
 
@@ -97,8 +138,9 @@ function initPongGame() {
     scene.add(ball);
 
     // Initialisation des vitesses (physique simple)
-    let ballVelocity = new THREE.Vector3(0.05, 0, 0.05); // Vitesse initiale de la balle
-    const ballSpeed = 0.1; // Contrôle de la vitesse de la balle
+    const ballSpeed = 0.05; // Contrôle de la vitesse de la balle
+    // let ballVelocity = new THREE.Vector3(0.05, 0, 0.05); // Vitesse initiale de la balle
+    let ballVelocity = generateRandomVelocity(0.5, 1, 0.2, 1, ballSpeed);
 
     // Création des paddles
     const paddleLG = new THREE.BoxGeometry(0.1, 0.5, 1.5);
@@ -259,8 +301,9 @@ function initPongGame() {
         if (ball.position.z > paddleLeft.position.z - paddleHeight && ball.position.z < paddleLeft.position.z + paddleHeight &&
             ball.position.x > paddleLeft.position.x - paddleWidth && ball.position.x < paddleLeft.position.x + paddleWidth) {
             let reboundFactor = 1.1;
+            updateBallVelocityOnPaddleHit(ball, ballVelocity, paddleLeft, reboundFactor * -ballVelocity.x, paddleHeight)
             ballVelocity.x = -ballVelocity.x * reboundFactor;
-            ballVelocity.z += paddleLeftSpeed * 0.1;
+            // ballVelocity.z += paddleLeftSpeed * 0.1;
         }
 
         // Collision avec la raquette droite (paddleRight)
@@ -300,14 +343,64 @@ function initPongGame() {
         paddleLeft.position.z = Math.max(-4, Math.min(4, paddleLeft.position.z));
         paddleRight.position.z = Math.max(-4, Math.min(4, paddleRight.position.z));
     }
+
+    function generateRandomVelocity(minX, maxX, minZ, maxZ, curSpeed) {
+        // Générer la composante X entre -maxX, -minX ou +minX, +maxX
+        let xDirection = (Math.random() * (maxX - minX) + minX);
+        xDirection *= (Math.random() > 0.5 ? 1 : -1);
+
+        // Générer la composante Z entre minZ et maxZ
+        let zDirection = (Math.random() * (maxZ - minZ) + minZ);
+        zDirection *= (Math.random() > 0.5 ? 1 : -1);
+
+        // Créer le vecteur de direction
+        let randomDirection = new THREE.Vector3(xDirection, 0, zDirection);
+      
+        // Normaliser le vecteur pour une magnitude de 1
+        randomDirection.normalize();
+      
+        // Multiplier par la vitesse souhaitée (curSpeed)
+        let ballVelocity = randomDirection.multiplyScalar(curSpeed);
+      
+        return ballVelocity;
+    }
     
+    // Fonction pour calculer la nouvelle vitesse de la balle en fonction du point de contact avec la palette
+    function updateBallVelocityOnPaddleHit(ball, ballVelocity, paddle, speed, paddleHeight) {
+        // Calculer la position relative du point de contact sur la palette
+        let hitPosition = ball.position.z - paddle.position.z;  // Supposons que la palette se déplace le long de l'axe z
+
+        // Normaliser la position du point de contact : -0.5 signifie un contact en bas de la palette,
+        // 0 signifie au centre, +0.5 signifie en haut de la palette
+        let normalizedHitPosition = hitPosition / paddleHeight;
+        console.log(normalizedHitPosition);
+
+        // Appliquer un facteur pour contrôler l'angle de rebond en fonction du point de contact
+        let angleFactor = 0.5; // Contrôle de l'angle du rebond selon la position du contact
+        let angle = normalizedHitPosition * angleFactor;
+
+        // Calculer les nouvelles composantes de la vitesse en fonction de l'angle
+        // let randomX = Math.random() > 0.5 ? 1 : -1;  // Direction aléatoire sur l'axe x
+        // let randomZ = Math.sign(ballVelocity.z);  // Garder la direction z, à moins que le contact avec la palette ne la change
+
+        // Ajuster la vitesse en fonction du point de contact sur la palette
+        //ballVelocity.x = randomX * speed;  // La vitesse en x est aléatoire, donnée par la direction du joueur
+        ballVelocity.z = speed * (angle);  // La vitesse en z dépend du point de contact avec la palette
+
+        // Optionnellement, limiter l'angle du rebond pour éviter des rebonds trop extrêmes
+        if (Math.abs(ballVelocity.z) > speed) {
+            ballVelocity.z = Math.sign(ballVelocity.z) * speed;
+        }
+    }
+
     function resetGame() {
         ball.position.set(0, 0.5, 0);
         
-        let speed = 0.07;
-        let randomX = (Math.random() > 0.5 ? 1 : -1) * speed;
-        let randomZ = (Math.random() > 0.5 ? 1 : -1) * speed;
-        ballVelocity.set(randomX, 0, randomZ);
+        // let speed = 0.07;
+        // let randomX = (Math.random() > 0.5 ? 1 : -1) * speed;
+        // let randomZ = (Math.random() > 0.5 ? 1 : -1) * speed;
+        // ballVelocity.set(randomX, 0, randomZ);
+        ballVelocity = generateRandomVelocity(0.5, 1, 0.2, 1, ballSpeed);
         // ballVelocity.set(0.05, 0, 0.05);
         paddleLeft.position.set(-6.5, 0.5, 0);
         paddleRight.position.set(6.5, 0.5, 0);
