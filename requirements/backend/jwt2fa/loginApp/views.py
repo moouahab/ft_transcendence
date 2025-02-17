@@ -158,3 +158,129 @@ class RefreshTokenView(APIView):
             return response
         except Exception as e:
             return Response({"message": "Refresh Token invalide ou expiré."}, status=status.HTTP_401_UNAUTHORIZED)
+
+from rest_framework.permissions import IsAuthenticated
+from rest_framework_simplejwt.tokens import RefreshToken
+from rest_framework.views import APIView
+from rest_framework.response import Response
+from rest_framework import status
+
+class RefreshTokenView(APIView):
+    def post(self, request, *args, **kwargs):
+        refresh_token = request.COOKIES.get("refresh")  # Récupération du refresh token depuis les cookies
+        if not refresh_token:
+            return Response({"message": "Aucun Refresh Token trouvé."}, status=status.HTTP_401_UNAUTHORIZED)
+
+        try:
+            new_access_token = str(RefreshToken(refresh_token).access_token)  # Générer un nouvel access_token
+            response = Response({"access_token": new_access_token}, status=status.HTTP_200_OK)
+
+            # Remettre le nouveau token dans le cookie
+            secure = True
+            response.set_cookie(key="access", value=new_access_token, httponly=True, secure=secure, samesite='Strict', max_age=3600)
+
+            return response
+        except Exception as e:
+            return Response({"message": "Refresh Token invalide ou expiré."}, status=status.HTTP_401_UNAUTHORIZED)
+            
+from django.http import JsonResponse
+from rest_framework.views import APIView
+import os
+import requests
+from django.contrib.auth import get_user_model  # Importer get_user_model
+
+class Auth42(APIView):
+    def get(self, request):
+        # Extraire le code du paramètre URL
+        code = request.GET.get("code")
+        if not code:
+            return JsonResponse({"error": "Le code d'autorisation n'a pas été fourni"}, status=400)
+        
+        # Préparer les données pour l'échange du token
+        data = {
+            'grant_type': "authorization_code",
+            'client_id': os.environ["CLIENT_ID"],
+            'client_secret': os.environ["CLIENT_SECRET"],
+            'code': code,
+            'redirect_uri': os.environ["REDIRECT_URI"],  # URI de redirection
+        }
+
+        # Envoyer la requête au serveur OAuth de 42 pour obtenir le token d'accès
+        response = requests.post('https://api.intra.42.fr/oauth/token', data=data)
+        
+        if response.status_code != 200:
+            return JsonResponse({"error": "Échec de l'obtention du token"}, status=response.status_code)
+        
+        # Extraire le token d'accès de la réponse
+        token_data = response.json()
+        access_token = token_data.get('access_token')
+
+        # Utiliser le token d'accès pour récupérer les données de l'utilisateur depuis l'API 42
+        user_response = requests.get(
+            'https://api.intra.42.fr/v2/me',
+            headers={'Authorization': f'Bearer {access_token}'}
+        )
+
+        if user_response.status_code != 200:
+            return JsonResponse({"error": "Échec de la récupération des données de l'utilisateur"}, status=user_response.status_code)
+
+        user_data = user_response.json()
+
+        # Vérifier si l'utilisateur existe déjà dans la base de données
+        user = self.get_or_create_user(user_data)
+        
+        # Génération des tokens JWT
+        tokens = generate_tokens_for_user(user)
+
+        # Log des tokens générés (en fonction de la configuration de logs)
+        logger.info(f"Tokens générés pour l'utilisateur {user.email}")
+        logger.debug(f"Access Token : {tokens['access']}")
+        logger.debug(f"Refresh Token : {tokens['refresh']}")
+
+        # Création de la réponse
+        response = JsonResponse({
+            "message": "Utilisateur authentifié avec succès.",
+            "access_token": tokens["access"],
+            "refresh_token": tokens["refresh"],
+            "username": user.username,
+        }, status=200)
+
+        # Stocker les tokens dans les cookies
+        secure = True
+        response.set_cookie(
+            key="access",
+            value=tokens["access"],
+            httponly=True,
+            secure=secure,
+            samesite='Strict',
+            max_age=60  # Expiration en 1 min
+        )
+        
+        response.set_cookie(
+            key="refresh",
+            value=tokens["refresh"],
+            httponly=True,
+            secure=secure,
+            samesite='Strict'
+        )
+
+        return res.redirect('https://localhost:3000/#choix'); 
+
+    def get_or_create_user(self, user_data):
+        # Exemple de vérification si l'utilisateur existe et création si nécessaire
+        User = get_user_model()  # Utiliser le modèle d'utilisateur personnalisé correct
+        username = user_data.get("login")
+        email = user_data.get("email")
+
+        # Vérification de l'existence de l'utilisateur dans la base de données
+        user, created = User.objects.get_or_create(
+            username=username,
+            defaults={"email": email},
+        )
+        
+        if created:
+            # Configurer l'utilisateur s'il est créé (désactiver le mot de passe si nécessaire)
+            user.set_unusable_password()  # Désactiver le mot de passe si vous utilisez OAuth login
+            user.save()
+        
+        return user

@@ -65,6 +65,15 @@ form.addEventListener('submit', async (event) => {
     }
 });
 
+document.getElementById('42LoginButton').addEventListener('click', () => {
+    // Rediriger l'utilisateur vers l'URL de connexion OAuth de 42
+    const clientId = 'u-s4t2ud-7b376fa04eb4dbbae0a22f639c617337b61b1f36f74e8d66d01cfa8881b51821';
+    const redirectUri = 'https://localhost:3000/api/api/auth42/';
+    const authUrl = `https://api.intra.42.fr/oauth/authorize?client_id=${clientId}&redirect_uri=${redirectUri}&response_type=code`;
+
+    window.location.href = authUrl;  // Redirect to 42 OAuth authorization
+});
+
 document.getElementById('loginForm').addEventListener('submit', async (event) => {
     event.preventDefault();
 
@@ -75,7 +84,6 @@ document.getElementById('loginForm').addEventListener('submit', async (event) =>
 
     // Création de l'objet de connexion
     const data = { email: email, password: password };
-
     try {
         const response = await fetch('https://localhost:3000/api/api/login/', {
             method: 'POST',
