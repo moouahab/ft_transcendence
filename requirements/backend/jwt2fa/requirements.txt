@@ -10,3 +10,4 @@ sendgrid
 pillow
 dnspython
 djangorestframework-simplejwt
+hvac

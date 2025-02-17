@@ -22,7 +22,7 @@ export async function isUserAuthenticated() {
     try {
       const response = await fetch("https://localhost/api/api/check-token/", {
         method: "GET",
-        credentials: "include", // Inclure les cookies pour vérifier le token
+        credentials: "include",
       });
   
       if (response.ok) {
