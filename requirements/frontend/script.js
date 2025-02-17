@@ -74,6 +74,29 @@ document.getElementById('42LoginButton').addEventListener('click', () => {
     window.location.href = authUrl;  // Redirect to 42 OAuth authorization
 });
 
+// document.getElementById('42LoginButton').addEventListener('click', () => {
+//     // Rediriger l'utilisateur vers l'URL de connexion OAuth de 42
+//     const clientId = 'u-s4t2ud-7b376fa04eb4dbbae0a22f639c617337b61b1f36f74e8d66d01cfa8881b51821';
+//     const redirectUri = 'https://localhost:3000/api/api/auth42/';
+//     const authUrl = `https://api.intra.42.fr/oauth/authorize?client_id=${clientId}&redirect_uri=${redirectUri}&response_type=code`;
+
+//     const popup = window.open(authUrl, "42AuthPopup", "width=600,height=700");
+
+//     // Listen for a message from the backend (after successful authentication)
+//     window.addEventListener("message", function (event) {
+//         if (event.origin !== "https://localhost:3000/api/api/auth42/?code=c51818bed9486d1fe65168364697f4e2f99bd67fce31a2db26d16c828b70d76d") {
+//             return;
+//         }
+        
+//         const { token } = event.data;
+//         if (token) {
+//             localStorage.setItem("authToken", token); // Store the token for future API calls
+//             popup.close();  // Close the popup
+//             window.location.reload(); // Reload or redirect to the game page
+//         }
+//     });
+// });
+
 document.getElementById('loginForm').addEventListener('submit', async (event) => {
     event.preventDefault();
 

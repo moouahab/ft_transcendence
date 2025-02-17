@@ -1,0 +1,19 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Authentication Success</title>
+</head>
+<body>
+    <script>
+        const token = "{{ token }}";  // Django passes the token here
+        console.log("Hello");
+        if (window.opener) {
+            window.opener.postMessage({ token }, "http://localhost:3000/#connexion");  // Adjust to your frontend URL
+            window.close();  // Close the popup
+        }
+    </script>
+    <p>Authentication successful! You can close this window.</p>
+</body>
+</html>

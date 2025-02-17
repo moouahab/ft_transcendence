@@ -182,19 +182,46 @@ class RefreshTokenView(APIView):
             return response
         except Exception as e:
             return Response({"message": "Refresh Token invalide ou expiré."}, status=status.HTTP_401_UNAUTHORIZED)
+
+from rest_framework.permissions import IsAuthenticated
+from rest_framework_simplejwt.tokens import RefreshToken
+from rest_framework.views import APIView
+from rest_framework.response import Response
+from rest_framework import status
+from django.http import HttpResponseRedirect
+
+class RefreshTokenView(APIView):
+    def post(self, request, *args, **kwargs):
+        refresh_token = request.COOKIES.get("refresh")  # Récupération du refresh token depuis les cookies
+        if not refresh_token:
+            return Response({"message": "Aucun Refresh Token trouvé."}, status=status.HTTP_401_UNAUTHORIZED)
+
+        try:
+            new_access_token = str(RefreshToken(refresh_token).access_token)  # Générer un nouvel access_token
+            response = Response({"access_token": new_access_token}, status=status.HTTP_200_OK)
+
+            # Remettre le nouveau token dans le cookie
+            secure = True
+            response.set_cookie(key="access", value=new_access_token, httponly=True, secure=secure, samesite='Strict', max_age=3600)
+
+            return response
+        except Exception as e:
+            return Response({"message": "Refresh Token invalide ou expiré."}, status=status.HTTP_401_UNAUTHORIZED)
             
 from django.http import JsonResponse
 from rest_framework.views import APIView
 import os
 import requests
 from django.contrib.auth import get_user_model  # Importer get_user_model
+from django.shortcuts import render
+from django.conf import settings
 
 class Auth42(APIView):
     def get(self, request):
         # Extraire le code du paramètre URL
         code = request.GET.get("code")
         if not code:
-            return JsonResponse({"error": "Le code d'autorisation n'a pas été fourni"}, status=400)
+            return HttpResponseRedirect('https://localhost:3000/#seConnecter') 
         
         # Préparer les données pour l'échange du token
         data = {
@@ -238,14 +265,16 @@ class Auth42(APIView):
         logger.debug(f"Refresh Token : {tokens['refresh']}")
 
         # Création de la réponse
-        response = JsonResponse({
-            "message": "Utilisateur authentifié avec succès.",
-            "access_token": tokens["access"],
-            "refresh_token": tokens["refresh"],
-            "username": user.username,
-        }, status=200)
+        # response = JsonResponse({
+        #     "message": "Utilisateur authentifié avec succès.",
+        #     "access_token": tokens["access"],
+        #     "refresh_token": tokens["refresh"],
+        #     "username": user.username,
+        # }, status=200)
 
         # Stocker les tokens dans les cookies
+        response = HttpResponseRedirect('https://localhost:3000/#choix')  # URL de redirection vers localhost:3000
+        
         secure = True
         response.set_cookie(
             key="access",
@@ -253,7 +282,7 @@ class Auth42(APIView):
             httponly=True,
             secure=secure,
             samesite='Strict',
-            max_age=60  # Expiration en 1 min
+            max_age=3600  # Expiration en 1 h
         )
         
         response.set_cookie(
@@ -264,7 +293,23 @@ class Auth42(APIView):
             samesite='Strict'
         )
 
-        return res.redirect('https://localhost:3000/#choix'); 
+        # Créer une réponse de redirection
+
+        
+        # response.set_cookie(
+        # 'username', 
+        # 'JohnDoe', 
+        # max_age=3600,  # Durée de validité du cookie en secondes (1 heure)
+        # secure=True,   # Le cookie sera uniquement transmis via une connexion HTTPS
+        # httponly=True  # Le cookie ne sera accessible que via HTTP, et non via JavaScript
+        # )
+        # Définir le cookie
+        # response.set_cookie('username', 'JohnDoe', max_age=3600)  # Cookie avec la valeur 'JohnDoe', valable pendant 1 heure
+        
+        # Retourner la réponse avec la redirection et le cookie
+        return response
+        # return render(request, "", {"token": tokens["access"]})
+        # return response
 
     def get_or_create_user(self, user_data):
         # Exemple de vérification si l'utilisateur existe et création si nécessaire
