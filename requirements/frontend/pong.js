@@ -301,8 +301,12 @@ function initPongGame() {
         if (ball.position.z > paddleLeft.position.z - paddleHeight && ball.position.z < paddleLeft.position.z + paddleHeight &&
             ball.position.x > paddleLeft.position.x - paddleWidth && ball.position.x < paddleLeft.position.x + paddleWidth) {
             let reboundFactor = 1.1;
-            updateBallVelocityOnPaddleHit(ball, ballVelocity, paddleLeft, reboundFactor * -ballVelocity.x, paddleHeight)
-            ballVelocity.x = -ballVelocity.x * reboundFactor;
+            updateBallVelocityOnPaddleHit(
+                ball,
+                ballVelocity,
+                paddleLeft,
+                reboundFactor * Math.sqrt(ballVelocity.x * ballVelocity.x + ballVelocity.z * ballVelocity.z),
+                paddleHeight);
             // ballVelocity.z += paddleLeftSpeed * 0.1;
         }
 
@@ -376,7 +380,7 @@ function initPongGame() {
         console.log(normalizedHitPosition);
 
         // Appliquer un facteur pour contrôler l'angle de rebond en fonction du point de contact
-        let angleFactor = 0.5; // Contrôle de l'angle du rebond selon la position du contact
+        let angleFactor = 1; // Contrôle de l'angle du rebond selon la position du contact
         let angle = normalizedHitPosition * angleFactor;
 
         // Calculer les nouvelles composantes de la vitesse en fonction de l'angle
@@ -385,7 +389,12 @@ function initPongGame() {
 
         // Ajuster la vitesse en fonction du point de contact sur la palette
         //ballVelocity.x = randomX * speed;  // La vitesse en x est aléatoire, donnée par la direction du joueur
-        ballVelocity.z = speed * (angle);  // La vitesse en z dépend du point de contact avec la palette
+        ballVelocity.x = -Math.sign(ballVelocity.x) * speed * Math.cos(angle * Math.PI);  // La vitesse en z dépend du point de contact avec la palette
+        ballVelocity.z = speed * Math.sin(angle * Math.PI);  // La vitesse en z dépend du point de contact avec la palette
+        console.log('speed ', speed);
+        console.log('speed ', Math.sqrt(ballVelocity.x * ballVelocity.x + ballVelocity.z * ballVelocity.z));
+        console.log('ballVelocity.x ', ballVelocity.x);
+        console.log('ballVelocity.z ', ballVelocity.z);
 
         // Optionnellement, limiter l'angle du rebond pour éviter des rebonds trop extrêmes
         if (Math.abs(ballVelocity.z) > speed) {
