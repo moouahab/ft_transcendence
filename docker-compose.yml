@@ -7,6 +7,8 @@ services:
     restart: always
     env_file:
       - .env
+    depends_on:
+      - vault
     ports:
       - "5432:5432"
     volumes:
@@ -21,6 +23,7 @@ services:
     env_file:
       - .env
     depends_on:
+      - vault
       - db
     ports:
       - "8000:8000"
@@ -54,6 +57,25 @@ services:
       - ./requirements/nginx/ssl:/etc/nginx/ssl:ro
       - ./requirements/nginx/modsec:/etc/nginx/modsec:ro
       - ./requirements/nginx/coreruleset:/usr/share/modsecurity-crs:ro
+
+  vault:
+    # image: vault:1.13.3
+    build:
+     context: ./requirements/vault/
+    container_name: vault
+    env_file:
+      - .env
+    ports:
+      - "8200:8200"
+    cap_add:
+      - IPC_LOCK
+    networks:
+      - transcendence
+    volumes:
+      - ./requirements/vault/config/vault.hcl:/vault/config/vault.hcl
+      - ./requirements/vault/certs/vault.crt:/vault/certs/vault.crt:ro
+      - ./requirements/vault/certs/vault.key:/vault/certs/vault.key:ro
+    # command: vault server -config=/vault/config/vault.hcl
 
 volumes:
   postgres_data:

@@ -11,29 +11,60 @@ https://docs.djangoproject.com/en/5.1/ref/settings/
 """
 
 import os
+import hvac
 from pathlib import Path
 
-# Build paths inside the project like this: BASE_DIR / 'subdir'.
+
+# Récupération de l'adresse de Vault et du token via variables d'environnement
+VAULT_ADDR = os.environ.get('VAULT_ADDR', 'http://localhost:8200')
+VAULT_TOKEN = os.environ.get('VAULT_TOKEN', 'root')  # En test, root ; en prod, un token restreint
+
+# Création du client hvac pour se connecter à Vault
+client = hvac.Client(url=VAULT_ADDR, token=VAULT_TOKEN)
+
+def get_vault_secret(path):
+    """
+    Tente de lire un secret stocké dans Vault (KV v2).
+    Renvoie un dict clé/valeur, ou un dict vide en cas d'erreur.
+    """
+    try:
+        response = client.secrets.kv.read_secret_version(path=path)
+        return response['data']['data']  # le dict contenant les clés
+    except Exception as e:
+        print(f"[WARNING] Impossible de lire le secret '{path}' depuis Vault : {e}")
+        return {}
+
+# ---------------------
+# 2) Récupération des secrets depuis Vault
+#    (vous devez avoir : vault kv put secret/postgres POSTGRES_DB=..., etc.)
+# ---------------------
+vault_postgres = get_vault_secret('postgres')
+vault_django   = get_vault_secret('django')
+vault_email    = get_vault_secret('email')
+# Vous pouvez créer d'autres chemins si besoin, par ex. secret/other_settings
+
+# ---------------------
+# 3) Chemin de base du projet
+# ---------------------
 BASE_DIR = Path(__file__).resolve().parent.parent
 
 
-# Quick-start development settings - unsuitable for production
-# See https://docs.djangoproject.com/en/5.1/howto/deployment/checklist/
+# ---------------------
+# 4) Récupération de la SECRET_KEY et DEBUG depuis Vault
+# ---------------------
+# Fallback : si Vault est vide ou inaccessible, on prend la valeur .env ou un default
+SECRET_KEY = vault_django.get('SECRET_KEY', os.getenv('SECRET_KEY', 'django-insecure-XXXXX'))
+DEBUG = vault_django.get('DEBUG', os.getenv('DEBUG', 'True')) == 'True'
 
-# SECURITY WARNING: keep the secret key used in production secret!
-SECRET_KEY = 'django-insecure-0qv4y-^8rr$%57cx2!qs%*ey*1w5p1w=n0i%@*8a!(--2s$lkp'
-
-# SECURITY WARNING: don't run with debug turned on in production!
-DEBUG = True
-
-ALLOWED_HOSTS = []
+# ALLOWED_HOSTS (ex. "localhost,127.0.0.1"), on split sur la virgule
+raw_allowed_hosts = vault_django.get('ALLOWED_HOSTS', os.getenv('ALLOWED_HOSTS', ''))
+ALLOWED_HOSTS = [h.strip() for h in raw_allowed_hosts.split(',')] if raw_allowed_hosts else []
 
 
+# Application definition
 AUTHENTICATION_BACKENDS = [
     'django.contrib.auth.backends.ModelBackend',
 ]
-
-# Application definition
 
 INSTALLED_APPS = [
     'django.contrib.admin',
@@ -48,9 +79,11 @@ INSTALLED_APPS = [
     'rest_framework_simplejwt',
     
     'corsheaders',
+
     # application custom
     'signupApp',
     'loginApp',
+    'accountApp',
 ]
 
 MIDDLEWARE = [
@@ -87,25 +120,23 @@ TEMPLATES = [
 WSGI_APPLICATION = 'jwt2fa.wsgi.application'
 
 
-# Database
-# https://docs.djangoproject.com/en/5.1/ref/settings/#databases
-
+# ---------------------
+# 5) Configuration de la base de données
+# ---------------------
 DATABASES = {
     'default': {
         'ENGINE': 'django.db.backends.postgresql',
-        'NAME': os.getenv('POSTGRES_DB', 'default_db_name'),
-        'USER': os.getenv('POSTGRES_USER', 'default_user'),
-        'PASSWORD': os.getenv('POSTGRES_PASSWORD', 'default_password'),
-        'HOST': os.getenv('POSTGRES_HOST', 'localhost'),
-        'PORT': os.getenv('POSTGRES_PORT', '5432'),
+        'NAME': vault_postgres.get('POSTGRES_DB', os.getenv('POSTGRES_DB', 'default_db_name')),
+        'USER': vault_postgres.get('POSTGRES_USER', os.getenv('POSTGRES_USER', 'default_user')),
+        'PASSWORD': vault_postgres.get('POSTGRES_PASSWORD', os.getenv('POSTGRES_PASSWORD', 'default_password')),
+        'HOST': vault_postgres.get('POSTGRES_HOST', os.getenv('POSTGRES_HOST', 'localhost')),
+        'PORT': vault_postgres.get('POSTGRES_PORT', os.getenv('POSTGRES_PORT', '5432')),
     }
 }
 
 
-
 # Password validation
 # https://docs.djangoproject.com/en/5.1/ref/settings/#auth-password-validators
-
 AUTH_PASSWORD_VALIDATORS = [
     {
         'NAME': 'django.contrib.auth.password_validation.UserAttributeSimilarityValidator',
@@ -124,35 +155,30 @@ AUTH_PASSWORD_VALIDATORS = [
 
 # Internationalization
 # https://docs.djangoproject.com/en/5.1/topics/i18n/
-
 LANGUAGE_CODE = 'en-us'
-
 TIME_ZONE = 'UTC'
-
 USE_I18N = True
-
 USE_TZ = True
 
 
 # Static files (CSS, JavaScript, Images)
 # https://docs.djangoproject.com/en/5.1/howto/static-files/
-
 STATIC_URL = 'static/'
-
-# Default primary key field type
-# https://docs.djangoproject.com/en/5.1/ref/settings/#default-auto-field
-
 DEFAULT_AUTO_FIELD = 'django.db.models.BigAutoField'
 
 AUTH_USER_MODEL = 'signupApp.SignupUser'
 
-# En développement, pour afficher les emails dans la console :
+# ---------------------
+# 6) Configuration Email
+# ---------------------
+# Fallback : .env ou default
 EMAIL_BACKEND = 'django.core.mail.backends.smtp.EmailBackend'
 EMAIL_HOST = 'smtp.gmail.com'
 EMAIL_PORT = 587
 EMAIL_USE_TLS = True
-EMAIL_HOST_USER = os.getenv('EMAIL_HOST_USER')
-EMAIL_HOST_PASSWORD = os.getenv('EMAIL_HOST_PASSWORD')
+
+EMAIL_HOST_USER = vault_email.get('EMAIL_HOST_USER', os.getenv('EMAIL_HOST_USER'))
+EMAIL_HOST_PASSWORD = vault_email.get('EMAIL_HOST_PASSWORD', os.getenv('EMAIL_HOST_PASSWORD'))
 
 
 # Répertoire où seront stockés les fichiers média
@@ -186,15 +212,11 @@ REST_FRAMEWORK = {
     ],
 }
 
-
-DEFAULT_AUTO_FIELD = 'django.db.models.BigAutoField'
-
 SESSION_COOKIE_HTTPONLY = True
-SESSION_COOKIE_SECURE = True  # Nécessite HTTPS
+SESSION_COOKIE_SECURE = True
 
 CORS_ALLOWED_ORIGINS = [
     "https://127.0.0.1",
     "https://localhost",
 ]
-
 CORS_ALLOW_CREDENTIALS = True

@@ -379,31 +379,22 @@ function applyTranslations(translations, lang) {
 
 
 function init()  { 
-    document.getElementById("logoutButton").addEventListener("click", () => {
+    document.getElementById("logoutButton").addEventListener("click", function() {
         fetch("https://localhost:3000/api/api/logout/", {
-        method: "POST",
-        credentials: "include",
-        })
-        .then(async (response) => {
-            const data = await response.json();
-            console.error(data);
-            if (!response.ok) {
-            throw new Error(data.message || "Erreur lors de la déconnexion");
-            }
-            // Déconnexion réussie : redirection ou message
-            console.log("Déconnexion réussie :", data.message);
-            window.location.hash = "#seConnecter";
-        })
-        .catch((error) => {
-            console.error("Erreur lors de la déconnexion :", error);
-            alert(error.message);
-        });
+            method: "POST",
+            credentials: "include" // Assurez-vous d'inclure les cookies
+        }).then(response => response.json())
+        .then(data => {
+            alert(data.message); // Affiche un message de déconnexion
+            showSection('seConnexion');
+        }).catch(error => console.error("Erreur lors de la déconnexion:", error));
     });
+    ;
 }
 
     async function isUserAuthenticated() {
     try {
-      const response = await fetch("https://localhost/api/api/check-token/", {
+      const response = await fetch("https://localhost:3000/api/api/check-token/", {
         method: "GET",
         credentials: "include", // Inclure les cookies pour vérifier le token
       });
