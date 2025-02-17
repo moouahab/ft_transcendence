@@ -59,9 +59,11 @@ function checkWinner() {
       if (currentPlayer === 'X') {
         alert('X a gagné !');
         updateMatchHistoryMorpion('win'); // Met à jour les victoires de X
+        saveMatchData();
       } else {
         alert('O a gagné !');
         updateMatchHistoryMorpion('loss'); // Met à jour les défaites de X
+        saveMatchData();
       }
       document.getElementById(`morpion-retour`).style.display = 'block';
       return;

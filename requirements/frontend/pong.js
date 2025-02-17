@@ -143,6 +143,7 @@ function initPongGame() {
                 showSection('choix-jeu');
                 resetScore();
                 updateMatchHistory("win");
+                saveMatchData();
                 return true; // Stopper l'animation
             }
             if (player2Score === 3)
@@ -152,6 +153,7 @@ function initPongGame() {
                 showSection('choix-jeu');
                 resetScore();
                 updateMatchHistory("loss");
+                saveMatchData();
                 return true; // Stopper l'animation
             }
         }

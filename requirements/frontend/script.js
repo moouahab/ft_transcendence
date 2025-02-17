@@ -156,13 +156,93 @@ document.getElementById('opt').addEventListener('click', function() {
 document.addEventListener("DOMContentLoaded", () =>
 {
     const infoCompte = document.getElementById("first");
-    infoCompte.innerHTML = localStorage.getItem('username');
+    const avatarImage = document.getElementById('avatar-image');
+
+    // Charger le pseudonyme depuis localStorage
+    const savedUsername = localStorage.getItem('username');
+    if (savedUsername) {
+        infoCompte.innerHTML = savedUsername; // Mettre à jour l'élément avec le pseudo sauvegardé
+    }
+
+    // Charger l'avatar depuis localStorage
+    const savedAvatar = localStorage.getItem('avatar');
+    if (savedAvatar) {
+        avatarImage.src = savedAvatar; // Mettre à jour l'image de l'avatar avec l'avatar sauvegardé
+    }
+
+    // Charger les victoires et défaites pour Pong
+    const savedWinsPong = localStorage.getItem('matchWinsPong');
+    const savedLossesPong = localStorage.getItem('matchLossesPong');
+
+    if (savedWinsPong) {
+        matchWinsPong = parseInt(savedWinsPong);
+        document.getElementById('match-win-pong').textContent = matchWinsPong;
+    }
+
+    if (savedLossesPong) {
+        matchLossesPong = parseInt(savedLossesPong);
+        document.getElementById('match-loss-pong').textContent = matchLossesPong;
+    }
+
+    // Charger les victoires et défaites pour Morpion
+    const savedWinsMorpion = localStorage.getItem('matchWinsMorpion');
+    const savedLossesMorpion = localStorage.getItem('matchLossesMorpion');
+
+    if (savedWinsMorpion) {
+        matchWinsMorpion = parseInt(savedWinsMorpion);
+        document.getElementById('match-win-morpion').textContent = matchWinsMorpion;
+    }
+
+    if (savedLossesMorpion) {
+        matchLossesMorpion = parseInt(savedLossesMorpion);
+        document.getElementById('match-loss-morpion').textContent = matchLossesMorpion;
+    }
+
+    // Initialiser les couleurs
+    updateMatchColors();
+    updateMatchColorsMorpion();
 
     if (window.location.hash === "#choix-PONG")
     {
         initPongGame();
     }
 });
+
+document.getElementById('save-account').addEventListener('click', function(event) {
+    event.preventDefault(); // Empêcher la soumission du formulaire
+
+    const avatarImage = document.getElementById('avatar-image');
+    const avatarUpload = document.getElementById('avatar-upload');
+    const usernameInput = document.getElementById('username');
+    const pseudonymeElement = document.getElementById('first');
+
+    const username = usernameInput.value.trim(); // Récupérer la valeur du pseudo depuis l'input
+
+    // Vérifier si un pseudo est saisi
+    if (username)
+    {
+        pseudonymeElement.textContent = username;
+        localStorage.setItem('username', username);; // Mettre à jour le pseudonyme affiché
+    } else {
+        alert("Veuillez entrer un pseudonyme !"); // Message d'erreur si aucun pseudo n'est saisi
+    }
+
+    // Vérifier si un avatar est sélectionné
+    const file = avatarUpload.files[0];
+    if (file) {
+        const reader = new FileReader();
+
+        reader.onload = function(e) {
+            avatarImage.src = e.target.result; // Mettre à jour l'image de l'avatar avec la nouvelle image
+
+            localStorage.setItem('avatar', e.target.result);
+        };
+
+        reader.readAsDataURL(file); // Lire le fichier image comme Data URL
+    }
+});
+
+
 
 let players = [];
 let matches = [];
@@ -397,7 +477,6 @@ function applyTranslations(translations, lang) {
     });
 }
 
-
 function init()  { 
     document.getElementById("logoutButton").addEventListener("click", function() {
         fetch("https://localhost:3000/api/api/logout/", {
@@ -406,7 +485,7 @@ function init()  {
         }).then(response => response.json())
         .then(data => {
             alert(data.message); // Affiche un message de déconnexion
-            showSection('seConnexion');
+            showSection('seConnecter');
         }).catch(error => console.error("Erreur lors de la déconnexion:", error));
     });
     ;
@@ -430,97 +509,82 @@ function init()  {
     }
   }
   
-  document.getElementById("avatar-upload").addEventListener("change", function(event) {
-    const file = event.target.files[0]; // Récupère le premier fichier sélectionné
-    if (file) {
-        const reader = new FileReader();
-        
-        reader.onload = function(e) {
-            // Met à jour l'image de l'avatar avec l'image téléchargée
-            document.getElementById("avatar-image").src = e.target.result;
-        };
-        
-        reader.readAsDataURL(file); // Convertit l'image en URL et la charge dans l'élément <img>
-    }
-});
 
-
-let matchWinsPong = 0;
-let matchLossesPong = 0;
-
-// Mettre à jour les couleurs selon les valeurs
-function updateMatchColors() {
-    const winElement = document.getElementById('match-win-pong');
-    const lossElement = document.getElementById('match-loss-pong');
-    
-    // Mettre à jour la couleur des victoires
-    if (matchWinsPong > 0) {
-        winElement.style.color = 'green';
-    } else {
-        winElement.style.color = 'white'; // La couleur par défaut si 0
-    }
-    
-    // Mettre à jour la couleur des défaites
-    if (matchLossesPong > 0) {
-        lossElement.style.color = 'red';
-    } else {
-        lossElement.style.color = 'white'; // La couleur par défaut si 0
-    }
-}
-
-
-function updateMatchHistory(type) {
-    if (type === 'win') {
-        matchWinsPong++;
-        document.getElementById('match-win-pong').textContent = matchWinsPong;
-    } else if (type === 'loss') {
-        matchLossesPong++;
-        document.getElementById('match-loss-pong').textContent = matchLossesPong;
-    }
-
-    // Mettre à jour les couleurs après avoir modifié les chiffres
-    updateMatchColors();
-}
-
-let matchWinsMorpion = 0;
-let matchLossesMorpion = 0;
-
-// Mettre à jour les couleurs selon les valeurs
-function updateMatchColorsMorpion() {
-    const winElement = document.getElementById('match-win-morpion');
-    const lossElement = document.getElementById('match-loss-morpion');
-    
-    // Mettre à jour la couleur des victoires
-    if (matchWinsMorpion > 0) {
-        winElement.style.color = 'green';
-    } else {
-        winElement.style.color = 'white'; // La couleur par défaut si 0
-    }
-    
-    // Mettre à jour la couleur des défaites
-    if (matchLossesMorpion > 0) {
-        lossElement.style.color = 'red';
-    } else {
-        lossElement.style.color = 'white'; // La couleur par défaut si 0
-    }
-}
-
-
-function updateMatchHistoryMorpion(type) {
-    if (type === 'win') {
-        matchWinsMorpion++;
-        document.getElementById('match-win-morpion').textContent = matchWinsMorpion;
-    } else if (type === 'loss') {
-        matchLossesMorpion++;
-        document.getElementById('match-loss-morpion').textContent = matchLossesMorpion;
-    }
-
-    // Mettre à jour les couleurs après avoir modifié les chiffres
-    updateMatchColorsMorpion();
-}
-
-
-
+  let matchWinsPong = 0;
+  let matchLossesPong = 0;
+  
+  let matchWinsMorpion = 0;
+  let matchLossesMorpion = 0;
+  
+  // Fonction de mise à jour des couleurs pour Pong
+  function updateMatchColors() {
+      const winElement = document.getElementById('match-win-pong');
+      const lossElement = document.getElementById('match-loss-pong');
+      
+      if (matchWinsPong > 0) {
+          winElement.style.color = 'green';
+      } else {
+          winElement.style.color = 'white';
+      }
+  
+      if (matchLossesPong > 0) {
+          lossElement.style.color = 'red';
+      } else {
+          lossElement.style.color = 'white';
+      }
+  }
+  
+  // Fonction de mise à jour des matchs pour Pong
+  function updateMatchHistory(type) {
+      if (type === 'win') {
+          matchWinsPong++;
+          document.getElementById('match-win-pong').textContent = matchWinsPong;
+      } else if (type === 'loss') {
+          matchLossesPong++;
+          document.getElementById('match-loss-pong').textContent = matchLossesPong;
+      }
+  
+      updateMatchColors();
+  }
+  
+  // Fonction de mise à jour des couleurs pour Morpion
+  function updateMatchColorsMorpion() {
+      const winElement = document.getElementById('match-win-morpion');
+      const lossElement = document.getElementById('match-loss-morpion');
+      
+      if (matchWinsMorpion > 0) {
+          winElement.style.color = 'green';
+      } else {
+          winElement.style.color = 'white';
+      }
+  
+      if (matchLossesMorpion > 0) {
+          lossElement.style.color = 'red';
+      } else {
+          lossElement.style.color = 'white';
+      }
+  }
+  
+  // Fonction de mise à jour des matchs pour Morpion
+  function updateMatchHistoryMorpion(type) {
+      if (type === 'win') {
+          matchWinsMorpion++;
+          document.getElementById('match-win-morpion').textContent = matchWinsMorpion;
+      } else if (type === 'loss') {
+          matchLossesMorpion++;
+          document.getElementById('match-loss-morpion').textContent = matchLossesMorpion;
+      }
+  
+      updateMatchColorsMorpion();
+  }
+  
+  // Sauvegarder les données des matchs dans le localStorage
+  function saveMatchData() {
+      localStorage.setItem('matchWinsPong', matchWinsPong);
+      localStorage.setItem('matchLossesPong', matchLossesPong);
+      localStorage.setItem('matchWinsMorpion', matchWinsMorpion);
+      localStorage.setItem('matchLossesMorpion', matchLossesMorpion);
+  }
 
 
 function OTPView() {
