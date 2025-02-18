@@ -81,6 +81,10 @@
                 Mon Compte <br><span class="info-comment" data-i18n="account_info"> (Accédez à vos informations personnelles)</span>
             </button>
 
+            <button type="button" id="button-social" data-i18n="social">
+                Social <br><span class="info-comment" data-i18n="social_info"> (Ajouter des amis)</span>
+            </button>
+
             <button type="button" id="logoutButton" data-i18n="deconnexion">Déconnexion</button>
         </div>
     </div>
@@ -236,6 +240,44 @@
             </div>
         </div>
     </div>
+
+    <!-- Section Social -->
+     <div class="content" id="choix-social">
+        <button onclick="showSection('choix')" id="button-retour" data-i18n="back-button">Retour</button>
+        <h1>Social</h1>
+        <!-- Formulaire -->
+        <form class="social-form">
+            <input type="text" id="input-username" placeholder="Pseudo" data-i18n="username-placeholder">
+            <button onclick="addFriend()" id="save-social" data-i18n="save-social-button">Ajouter en ami</button>
+        </form>            
+        <!-- Historique des matchs -->
+        <div class="historique-section">
+            <h2 data-i18n="histo">Historique des matchs</h2>
+            <div class="infos-compte" id="second">Pseudonyme</div>
+
+            <div class="historique-info-container">
+                <!-- Historique du jeu Pong -->
+                <div class="historique-info">
+                    <h3>Pong</h3>
+                    <p id="victory-pong"><span data-i18n="mvictory">Matchs gagnés :</span></p>
+                    <span id="match-win-pong2" class="match-count">0</span> <!-- Le chiffre est maintenant en dessous -->
+                    <p id="lost-pong"><span data-i18n="mlost">Matchs perdus :</span></p>
+                    <span id="match-loss-pong2" class="match-count">0</span> <!-- Le chiffre est maintenant en dessous -->
+                </div>
+
+                <div class="separation-line"></div> <!-- Ligne de séparation -->
+
+                <!-- Historique du jeu Morpion -->
+                <div class="historique-info">
+                    <h3>Morpion</h3>
+                    <p id="victory-morpion"><span data-i18n="mvictory">Matchs gagnés :</span></p>
+                    <span id="match-win-morpion2" class="match-count">0</span> <!-- Le chiffre est maintenant en dessous -->
+                    <p id="lost-morpion"><span data-i18n="mlost">Matchs perdus :</span></p>
+                    <span id="match-loss-morpion2" class="match-count">0</span> <!-- Le chiffre est maintenant en dessous -->
+                </div>
+            </div>
+        </div>
+     </div>
 
     <!-- Section PONG -->
     <div class="gameplay" id="choix-PONG">

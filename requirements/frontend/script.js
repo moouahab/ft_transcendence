@@ -1,6 +1,6 @@
 function showSection(sectionId) {
     // Masquer toutes les sections
-    const sections = ['seConnecter', 'opt','connexion', 'choix', 'choix-jeu', 'choix-compte', 'choix-PONG', 'choix-player', 'choix-ia', 'choix-tournois', 'match-display', 'choix-morpion', 'game-morpion'];
+    const sections = ['seConnecter', 'opt','connexion', 'choix', 'choix-jeu', 'choix-compte', 'choix-PONG', 'choix-player', 'choix-ia', 'choix-tournois', 'match-display', 'choix-morpion', 'game-morpion', 'choix-social'];
     sections.forEach(section => {
         document.getElementById(section).style.display = 'none';
     });
@@ -53,6 +53,22 @@ form.addEventListener('submit', async (event) => {
         localStorage.setItem('username', result.username);
         console.log('Succès :', result.username);
         alert(result.message);
+        
+        const users = JSON.parse(localStorage.getItem('users')) || []; // Récupère le tableau existant ou crée un nouveau tableau si vide
+
+        const newUser = {
+          username: result.username,
+          avatar: "", // Vous pouvez ajouter un avatar par défaut ici si nécessaire
+          pong_gagne: 0,
+          pong_perdu: 0,
+          morpion_gagne: 0,
+          morpion_perdu: 0,
+        };
+        users.push(newUser); // Ajoute le nouvel utilisateur dans le tableau
+        
+        localStorage.setItem('users', JSON.stringify(users));
+
+        console.log(users);
         showSection('choix');
       } else {
         const errorData = await response.json();
@@ -67,7 +83,7 @@ form.addEventListener('submit', async (event) => {
 
 document.getElementById('loginForm').addEventListener('submit', async (event) => {
     event.preventDefault();
-  
+
     // Récupération des données du formulaire
     const email = event.target.querySelector('input[name="email"]').value;
     const password = event.target.querySelector('input[name="password"]').value;
@@ -75,7 +91,7 @@ document.getElementById('loginForm').addEventListener('submit', async (event) =>
   
     // Création de l'objet de connexion
     const data = { email: email, password: password };
-  
+
     try {
       const response = await fetch('https://localhost:3000/api/api/login/', {
         method: 'POST',
@@ -139,6 +155,10 @@ document.getElementById('button-jeu').addEventListener('click', function() {
 
 document.getElementById('button-compte').addEventListener('click', function() {
     showSection('choix-compte'); // Afficher la section du compte
+});
+
+document.getElementById('button-social').addEventListener('click', function() {
+    showSection('choix-social'); // Afficher la section du compte
 });
 
 document.getElementById('logoutButton').addEventListener('click', function() {
@@ -206,6 +226,7 @@ document.addEventListener("DOMContentLoaded", () =>
     {
         initPongGame();
     }
+
 });
 
 document.getElementById('save-account').addEventListener('click', function(event) {
@@ -537,11 +558,13 @@ function init()  {
   // Fonction de mise à jour des matchs pour Pong
   function updateMatchHistory(type) {
       if (type === 'win') {
-          matchWinsPong++;
-          document.getElementById('match-win-pong').textContent = matchWinsPong;
+        matchWinsPong++;
+        document.getElementById('match-win-pong').textContent = matchWinsPong;
+        updateUserScores(localStorage.getItem('username'), 'pong', 'win');
       } else if (type === 'loss') {
-          matchLossesPong++;
-          document.getElementById('match-loss-pong').textContent = matchLossesPong;
+        matchLossesPong++;
+        document.getElementById('match-loss-pong').textContent = matchLossesPong;
+        updateUserScores(localStorage.getItem('username'), 'pong', 'loss');
       }
   
       updateMatchColors();
@@ -570,9 +593,12 @@ function init()  {
       if (type === 'win') {
           matchWinsMorpion++;
           document.getElementById('match-win-morpion').textContent = matchWinsMorpion;
+        updateUserScores(localStorage.getItem('username'), 'morpion', 'win');
+
       } else if (type === 'loss') {
           matchLossesMorpion++;
           document.getElementById('match-loss-morpion').textContent = matchLossesMorpion;
+        updateUserScores(localStorage.getItem('username'), 'morpion', 'loss');
       }
   
       updateMatchColorsMorpion();
@@ -644,3 +670,84 @@ function OTPView() {
       });
     });
   }
+
+
+// Fonction pour ajouter un utilisateur
+function addFriend() {
+    console.log(localStorage.getItem('users'));
+    const username = document.getElementById('input-username').value.trim(); // Récupère le pseudo entré par l'utilisateur
+    if (username === '') {
+        alert('Veuillez entrer un pseudo valide.');
+        return;
+    }
+
+    const users = JSON.parse(localStorage.getItem('users')) || []; // Récupère le tableau d'utilisateurs
+
+    // Recherche si l'utilisateur existe déjà
+    const userFound = users.find(user => user.username === username);
+
+    if (userFound) {
+        // Si l'utilisateur existe, affiche ses informations
+        console.log(users);
+        displayUserInfo(userFound);
+    }
+    else
+    {
+        alert("le pseudo entrer n'existe pas.");
+        return;
+    }
+}
+
+// Fonction pour afficher les informations de l'utilisateur
+function displayUserInfo(user) {
+    // Afficher le pseudo de l'utilisateur
+    const pseudoElement = document.getElementById('second');
+    pseudoElement.textContent = user.username;
+
+    // Afficher l'historique des matchs
+    document.getElementById('match-win-pong2').textContent = user.pong_gagne;
+    document.getElementById('match-loss-pong2').textContent = user.pong_perdu;
+    document.getElementById('match-win-morpion2').textContent = user.morpion_gagne;
+    document.getElementById('match-loss-morpion2').textContent = user.morpion_perdu;
+
+    // Ajoutez ici d'autres éléments si nécessaire pour afficher l'avatar ou d'autres informations
+}
+
+function updateUserScores(username, game, result) {
+    // Récupérer les utilisateurs depuis localStorage
+    const users = JSON.parse(localStorage.getItem('users')) || [];
+
+    // Trouver l'utilisateur correspondant
+    const user = users.find(user => user.username === username);
+    console.log('ici', user.username); // Vérifie l'utilisateur trouvé
+
+    if (user) {
+        // Mettre à jour les scores selon le jeu et le résultat
+        if (game === "pong") {
+            if (result === "win") {
+                user.pong_gagne++;
+                // Sauvegarder la victoire de Pong dans le localStorage
+                localStorage.setItem('matchWinsPong', user.pong_gagne);
+            } else if (result === "loss") {
+                user.pong_perdu++;
+                // Sauvegarder la défaite de Pong dans le localStorage
+                localStorage.setItem('matchLossesPong', user.pong_perdu);
+            }
+        } else if (game === "morpion") {
+            if (result === "win") {
+                user.morpion_gagne++;
+                // Sauvegarder la victoire de Morpion dans le localStorage
+                localStorage.setItem('matchWinsMorpion', user.morpion_gagne);
+            } else if (result === "loss") {
+                user.morpion_perdu++;
+                // Sauvegarder la défaite de Morpion dans le localStorage
+                localStorage.setItem('matchLossesMorpion', user.morpion_perdu);
+            }
+        }
+
+        // Mettre à jour les utilisateurs dans localStorage
+        localStorage.setItem('users', JSON.stringify(users));
+    } else {
+        console.log("Utilisateur non trouvé.");
+    }
+}
