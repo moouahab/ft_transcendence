@@ -1,0 +1,542 @@
+body {
+    background-color: #161a22;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    height: 100vh;
+    font-family: 'Press Start 2P', cursive;
+    text-align: center;
+    margin: 0;
+}
+
+.stars {
+    position: absolute;
+    width: 100%;
+    height: 100%;
+    background: url('textures/stardust.png') repeat;
+    z-index: -1;
+}
+
+
+.intro {
+    padding: 60px;
+    background-color: #434788;
+    border-radius: 20px;
+    box-shadow: 0 6px 25px rgba(137, 165, 255, 0.6);
+    text-align: center;
+    width: 600px;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+}
+
+.inscription-p {
+    margin-top: 20px;
+}
+
+.intro h1 {
+    font-size: 40px;
+    color: aliceblue;
+    margin-bottom: 25px;
+}
+
+.intro p {
+    font-size: 18px;
+    color: aliceblue;
+    margin-bottom: 40px;
+}
+
+.content {
+    padding: 60px;
+    background-color: #434788;
+    border-radius: 20px;
+    box-shadow: 0 6px 25px rgba(137, 165, 255, 0.6);
+    text-align: center;
+    width: 600px;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+}
+
+
+.content h1 {
+    font-size: 40px;
+    color: aliceblue;
+    margin-bottom: 25px;
+}
+
+.content p {
+    font-size: 18px;
+    color: aliceblue;
+    margin-bottom: 40px;
+}
+
+form {
+    display: flex;
+    flex-direction: column;
+    gap: 20px;
+    width: 100%;
+    align-items: center;
+}
+
+input {
+    padding: 16px;
+    border: none;
+    border-radius: 50px;
+    font-size: 18px;
+    text-align: center;
+    font-family: 'Press Start 2P', cursive;
+    background-color: white;
+    color: black;
+    width: 90%;
+    outline: none;
+    transition: 0.3s;
+}
+
+input:focus {
+    background-color: rgb(200, 220, 255);
+}
+
+button {
+    background-color: black;
+    font-family: 'Press Start 2P', cursive;
+    color: white;
+    padding: 16px;
+    border: none;
+    border-radius: 50px;
+    font-size: 18px;
+    cursor: pointer;
+    transition: 0.3s;
+    width: 90%;
+    margin-top: 20px;
+}
+
+button:hover {
+    background-color: white;
+    color: black;
+}
+
+/* Masquer le texte de commentaire dans le span par défaut */
+.info-comment {
+    font-size: 12px;
+    color: #ffffff;
+    margin-left: 10px;
+    opacity: 0; /* Cacher le texte par défaut avec opacité */
+    transition: opacity 0.3s ease-in-out; /* Transition fluide pour l'apparition du texte */
+}
+
+/* Style général des boutons */
+.content button {
+    padding: 30px;
+    font-family: 'Press Start 2P', cursive;
+    background-color: aliceblue;
+    background-image: linear-gradient(45deg, #7379d867, #3b2db6);
+    font-size: 22px;
+    color: white;
+    border: none;
+    border-radius: 50px;
+    cursor: pointer;
+    transition: transform 0.3s ease, background-color 0.3s ease;
+    width: 100%;
+    margin-top: 20px;
+}
+
+/* Affichage du texte dans le span au survol du bouton */
+.content button:hover .info-comment {
+    opacity: 1; /* Afficher le texte avec une transition d'opacité */
+    margin-top: 5px;
+}
+
+/* Effet de survol sur le bouton (agrandissement et changement de couleur) */
+.content button:hover {
+    transform: scale(1.1); /* Agrandir légèrement le bouton */
+    background-color: #6478ff;
+}
+
+/* Style pour le bouton Retour */
+#button-retour {
+    font-size: 18px;
+    padding: 8px;
+    margin-bottom: 20px;
+    background-color: #3b2db6;
+    color: white;
+    border-radius: 30px;
+    box-shadow: 0 2px 9px rgba(137, 165, 255, 0.6);
+    cursor: pointer;
+    transition: background-color 0.3s ease;
+}
+
+/* Hover pour le bouton Retour */
+#button-retour:hover {
+    background-color: #1f1d83;
+}
+
+#scoreBoard {
+    position: absolute;
+    top: 200px;
+    left: 50%;
+    transform: translateX(-50%);
+    font-size: 25px;
+    color: white;
+}
+
+/* ===================== */
+/* 🎮 PAGE MON COMPTE 🎮 */
+/* ===================== */
+
+/* Section "Mon Compte" */
+#choix-compte {
+    width: 600px;
+    background: #434788;
+    padding: 40px;
+    border-radius: 20px;
+    box-shadow: 0 6px 25px rgba(137, 165, 255, 0.6);
+    text-align: center;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+}
+
+/* Avatar */
+.avatar-container {
+    position: relative;
+    display: flex;              /* Active le modèle flex pour aligner les éléments horizontalement */
+    align-items: center;        /* Aligne les éléments verticalement au centre */
+    justify-content: center;    /* Aligne les éléments horizontalement au centre */
+    width: 200px;
+    height: 120px;
+    margin-bottom: 20px;
+    margin-left: 33%;
+}
+
+.avatar {
+    width: 125px;
+    height: 125px;
+    border-radius: 50%;
+    border: 4px solid white;
+    object-fit: cover;
+    transition: transform 0.3s ease-in-out, border 0.3s ease-in-out;
+}
+
+/* Effet au survol de l'avatar */
+.avatar:hover {
+    transform: scale(1.1);
+    border-color: #a3b0ff;
+}
+
+input[type="file"] {
+    width: 200px;
+    margin-top: 10px;
+    margin-left: 20px;
+    font-size: 6px;
+}
+
+
+.infos-compte {
+    color: rgb(255, 255, 255);
+    font-size: 20px;
+    margin-bottom: 20px;
+    text-shadow: 5px 4px 6px rgb(72, 138, 224);  /* Ombre légère */
+}
+
+/* Formulaire */
+.account-form {
+    display: flex;
+    flex-direction: column;
+    gap: 15px;
+    width: 100%;
+    align-items: center;
+}
+
+/* Champs de saisie */
+.account-form input {
+    padding: 14px;
+    border: none;
+    border-radius: 50px;
+    font-size: 14px;
+    text-align: center;
+    font-family: 'Press Start 2P', cursive;
+    background-color: white;
+    color: black;
+    width: 90%;
+    outline: none;
+    transition: 0.3s;
+}
+
+.account-form input:focus {
+    background-color: rgb(200, 220, 255);
+}
+
+/* Bouton Sauvegarder */
+#save-account {
+    background-color: black;
+    font-family: 'Press Start 2P', cursive;
+    color: white;
+    padding: 16px;
+    border: none;
+    border-radius: 50px;
+    font-size: 16px;
+    cursor: pointer;
+    transition: transform 0.3s ease, background-color 0.3s ease;
+    width: 90%;
+    margin-top: 20px;
+}
+
+#save-account:hover {
+    background-color: white;
+    color: black;
+    transform: scale(1.1);
+}
+
+.btn-primary {
+    background-color: #4CAF50; /* Changer la couleur */
+    border-color: #4CAF50;
+}
+/* Historique Section */
+.historique-section {
+    font-size: 12px;
+    color: white;
+    margin-top: 15px;
+}
+
+.historique-section h2 {
+    margin-top: 30px;
+    margin-bottom: 30px;
+    text-shadow: 5px 4px 6px rgb(72, 138, 224);  /* Ombre légère */
+}
+
+/* Container pour les deux historiques */
+.historique-info-container {
+    display: flex;
+    justify-content: space-between;
+    gap: 20px;
+}
+
+/* Historique pour chaque jeu */
+.historique-info {
+    flex: 1;
+}
+
+/* Ligne de séparation entre les deux jeux */
+.separation-line {
+    width: 1px;
+    background-color: white;
+    height: 100%;
+    margin: 0 10px;
+}
+
+/* Style des titres des jeux */
+h3 {
+    font-size: 16px;
+    margin-bottom: 10px;
+}
+
+/* Style des éléments de comptage */
+.match-count {
+    font-weight: bold;
+    display: block; /* Permet au chiffre de s'afficher sur une nouvelle ligne */
+    margin-top: 5px; /* Espacement entre le texte et le chiffre */
+    font-size: 16px; /* Taille des chiffres */
+}
+
+/* Alignement des éléments sous chaque label */
+.historique-info p {
+    margin-bottom: 5px;
+    font-size: 14px; /* Taille de la police des textes */
+}
+
+/* Centrer le contenu */
+.historique-info span {
+    margin-bottom: 5px;
+    display: block;
+    text-align: center;
+}
+
+/* Pour la responsivité */
+@media (max-width: 768px) {
+    .historique-info-container {
+        flex-direction: column; /* Empile les éléments verticalement sur petits écrans */
+        align-items: center;
+    }
+
+    .separation-line {
+        width: 100%; /* La ligne de séparation devient pleine largeur sur petits écrans */
+        margin: 10px 0;
+    }
+}
+
+/* Section Tournois */
+
+#choix-tournois h2 {
+    font-family: 'Press Start 2P', cursive;
+    font-size: 1.5em;
+    margin-bottom: 15px;
+    color: white;
+}
+
+#player-selection {
+    margin-top: 20px;
+}
+
+#player-selection label {
+    display: block;
+    margin: 5px 0;
+    font-size: 1.2em;
+    color: rgb(255, 251, 0);
+}
+
+#player-selection input {
+    width: 204px;
+    padding: 20px;
+    font-size: 1em;
+    margin: 5px;
+    border-radius: 50px;
+}
+
+#match-display {
+    text-align: center;
+    padding: 20px;
+}
+
+#match-display h2 {
+    font-family: 'Press Start 2P', cursive;
+    font-size: 2em;
+    margin-bottom: 20px;
+}
+
+#match-display div {
+    margin-bottom: 10px;
+    font-size: 1.5em;
+}
+
+#match-display button {
+    padding: 10px 20px;
+    background-color: #28a745;
+    color: white;
+    border: none;
+    border-radius: 5px;
+    cursor: pointer;
+    font-size: 1.2em;
+}
+
+#match-display button:hover {
+    background-color: #218838;
+}
+
+#game-board .cell {
+    width: 100px; /* Fixe la largeur */
+    height: 100px; /* Fixe la hauteur */
+    background-color: #8daadf;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-size: 2rem;
+    border: 1px solid #ccc;
+    cursor: pointer;
+    transition: all 0.2s ease;  /* Ajout d'une transition pour un effet plus doux */
+}
+
+/* Ajout d'un effet de zoom ou de changement de taille lorsque l'on survole */
+#game-board .cell:active {
+    transform: scale(1);  /* Assure que la cellule ne change pas de taille */
+    background-color: #b2c7e0; /* Modifie légèrement la couleur au clic, si nécessaire */
+}
+
+/* Optionnel : quand une cellule est cliquée, ne pas la "faire grossir" */
+#game-board .cell.clicked {
+    transform: scale(1);  /* Evite tout agrandissement ou rétrécissement */
+}
+
+/* Style pour le bouton Retour */
+#morpion-retour {
+    padding: 30px;
+    background-color: aliceblue;
+    background-image: linear-gradient(45deg, #7379d867, #3b2db6);
+    font-size: 22px;
+    color: white;
+    border: none;
+    border-radius: 50px;
+    cursor: pointer;
+    transition: transform 0.3s ease, background-color 0.3s ease;
+    width: 100%;
+    margin-top: 20px;
+}
+
+/* Hover pour le bouton Retour */
+#morpion-retour:hover {
+    background-image: linear-gradient(45deg, #3b2db6, #7379d867);
+}
+
+
+
+/* Style pour la section de sélection de la langue */
+.language-selector {
+    background-color: #434788; /* Correspond au fond de la section */
+    border-radius: 20px; /* Correspond au rayon des bordures de .content */
+    padding: 15px; /* Ajoute de l'espace autour du dropdown */
+    width: 90%; /* Même largeur que les boutons */
+    margin-bottom: 20px;
+    box-shadow: 0 6px 25px rgba(137, 165, 255, 0.6); /* Ombre portée pour correspondre à la section */
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    margin: 0 auto; /* Centre le conteneur */
+}
+
+/* Style pour le label du choix de langue */
+.language-selector label {
+    font-size: 20px;
+    color: aliceblue; /* Même couleur que le texte de la section */
+    margin-bottom: 10px;
+}
+
+/* Style pour le dropdown du choix de langue */
+#language-selector {
+    background-color: #f8f9fa; /* Fond clair pour le dropdown */
+    color: #434788; /* Texte sombre pour contraster avec le fond */
+    border: 2px solid #007bff; /* Bordure bleue pour correspondre aux accents de la page */
+    border-radius: 12px; /* Coins arrondis */
+    font-size: 16px;
+    padding: 12px 30px 12px 20px; /* Augmenter l'espace à droite pour laisser plus de place à la flèche */
+    width: 100%; /* Prendre toute la largeur disponible */
+    box-sizing: border-box; /* Inclure le padding dans la largeur totale */
+    min-width: 200px; /* Ajouter une largeur minimale pour éviter le chevauchement */
+    transition: all 0.3s ease; /* Effet de transition au survol/focus */
+    text-align: center; /* Centrer le texte dans le menu déroulé */
+}
+
+/* Effet au survol et au focus, accentué */
+#language-selector:hover,
+#language-selector:focus {
+    background-color: #d1e7ff; /* Fond plus clair au survol */
+    border-color: #0056b3; /* Bordure bleue plus foncée */
+    box-shadow: 0px 0px 20px rgba(0, 123, 255, 0.7); /* Ombre plus accentuée */
+    transform: scale(1.05); /* Légère mise à l'échelle pour donner de l'impact */
+}
+
+/* Effet de focus uniquement après sélection */
+.language-selector:focus-within #language-selector {
+    background-color: #f8f9fa; /* Retour au fond clair après sélection */
+    border-color: #007bff; /* Maintien de la bordure bleue */
+    box-shadow: 0px 0px 10px rgba(0, 123, 255, 0.3); /* Moins d'ombre au focus */
+    transform: none; /* Annule l'effet de mise à l'échelle */
+}
+
+/* Réactive le survol après avoir sélectionné un élément */
+#language-selector:focus:hover {
+    background-color: #d1e7ff; /* Réactive l'effet de survol */
+    border-color: #0056b3; /* Réactive la bordure sur survol */
+    box-shadow: 0px 0px 20px rgba(0, 123, 255, 0.7); /* Ombre au survol */
+    transform: scale(1.05); /* Réactive la mise à l'échelle */
+}
+
+/* Pour s'assurer que le texte et la flèche n'empiètent pas l'un sur l'autre */
+#language-selector::-ms-expand {
+    display: none; /* Cache la flèche pour les navigateurs qui ne supportent pas le personnalisable dropdown */
+}
+
+/* Ajustement des options du dropdown */
+#language-selector option {
+    padding: 10px; /* Ajouter de l'espace pour chaque option */
+    text-align: left; /* Centrer le texte des options */
+}

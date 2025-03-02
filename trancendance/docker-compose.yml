@@ -1,0 +1,85 @@
+version: '3.9'
+
+services:
+  db:
+    image: postgres:13
+    container_name: db
+    restart: always
+    env_file:
+      - .env
+    depends_on:
+      - vault
+    ports:
+      - "5432:5432"
+    volumes:
+      - postgres_data:/var/lib/postgresql/data
+    networks:
+      - transcendence
+    
+  backend:
+    build:
+      context: ./requirements/backend/jwt2fa/
+    container_name: user_auth
+    env_file:
+      - .env
+    depends_on:
+      - vault
+      - db
+    ports:
+      - "8000:8000"
+    volumes:
+      - ./requirements/backend/jwt2fa:/jwt2fa
+    command: >
+      sh -c "sleep 3 &&
+            python manage.py makemigrations &&
+            python manage.py migrate &&
+            python create_superuser.py &&
+            gunicorn jwt2fa.wsgi:application --bind 0.0.0.0:8000 --workers=4 --reload"
+    networks:
+      - transcendence
+
+  nignix-security:
+    build:
+      context: ./requirements/nginx/
+      dockerfile: Dockerfile
+    container_name: nignix-security
+    depends_on:
+      - backend
+    ports:
+      - "3080:80"
+      - "3000:443"
+    env_file:
+      - .env
+    networks:
+      - transcendence
+    volumes:
+      - ./requirements/frontend:/usr/share/nginx/html:ro
+      - ./requirements/nginx/ssl:/etc/nginx/ssl:ro
+      - ./requirements/nginx/modsec:/etc/nginx/modsec:ro
+      - ./requirements/nginx/coreruleset:/usr/share/modsecurity-crs:ro
+
+  vault:
+    # image: vault:1.13.3
+    build:
+     context: ./requirements/vault/
+    container_name: vault
+    env_file:
+      - .env
+    ports:
+      - "8200:8200"
+    cap_add:
+      - IPC_LOCK
+    networks:
+      - transcendence
+    volumes:
+      - ./requirements/vault/config/vault.hcl:/vault/config/vault.hcl
+      - ./requirements/vault/certs/vault.crt:/vault/certs/vault.crt:ro
+      - ./requirements/vault/certs/vault.key:/vault/certs/vault.key:ro
+    # command: vault server -config=/vault/config/vault.hcl
+
+volumes:
+  postgres_data:
+
+networks:
+  transcendence:
+    driver: bridge

@@ -1,0 +1,255 @@
+<!DOCTYPE html>
+<html lang="fr">
+    <head>
+        <meta charset="UTF-8">
+        <meta name="viewport" content="width=device-width, initial-scale=1.0">
+        <title>Transcendence</title>
+        <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css">
+        <link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Press+Start+2P&display=swap">
+        <link rel="stylesheet" href="style.css">
+</head>
+<body>
+
+    <div class="stars"></div>
+
+    <!-- Section de connexion -->
+    <div class="intro" id="connexion">
+        <h1>Bienvenue</h1>
+        <p>Avant de commencer ton aventure avec nous, crée un compte !</p>
+
+        <form id="signupForm" method="POST">
+            <input type="text" name="pseudo" placeholder="Pseudo" required>
+            <input type="email" name="email" placeholder="Email" required>
+            <input type="password" name="password" placeholder="Mot de passe" required>
+            <input type="password" name="confirm_password" placeholder="Confirme ton mot de passe" required>
+            <button type="submit">Se connecter</button>
+        </form>
+        <!-- 42 OAuth Login Button -->
+        <br>
+        <br>
+        <p>Ou</p>
+        <button id="42LoginButton">Se connecter avec 42</button>
+    </div>
+
+    <div class="content" id="opt">
+        <form id="otpForm" class="form-container">
+            <div class="form-group">
+              <label>Email</label>
+              <input type="email" id="otpEmail" required />
+            </div>
+            <div class="form-group">
+              <label>Code OTP</label>
+              <input type="text" id="otpCode" required />
+            </div>
+            <div class="connect-btn">
+              <button type="submit" class="cancel-btn">Se connecter</button>
+              <a href="#" class="cancel-btn">Annuler</a>
+            </div>
+          </form>
+          
+          <div id="response"></div>
+    </div>
+
+    <div class="content" id="seConnecter">
+        <h1>Connexion</h1>
+        <form id="loginForm" method="POST">
+            <input type="text" name="email" placeholder="email" required>
+            <input type="password" name="password" placeholder="Mot de passe" required>
+            <button type="submit">Se connecter</button>
+        </form>        
+        <p class="inscription-p">Pas encore inscrit ?</p>
+        <button id="inscription-button" onclick="showSection('connexion')">Inscription</button>
+    </div>
+
+    <!-- Section avec choix après la connexion -->
+    <div class="content" id="choix" style="display: none;">
+        <h1 data-i18n="choose_mode">Menu</h1>
+
+        <!-- Menu déroulant choix de langue centré -->
+        <div class="language-selector d-flex flex-column align-items-center text-center mb-3">
+            <label for="language-selector" class="form-label fw-bold" data-i18n="choose_language">
+                Choose language:
+            </label>
+            <select id="language-selector" class="form-select w-auto">
+                <option value="fr" selected>Français</option>
+                <option value="en">English</option>
+                <option value="es">Español</option>
+            </select>
+        </div>
+
+        <div class="choices">
+            <button type="button" id="button-jeu" data-i18n="play">
+                Jouer <br><span class="info-comment" data-i18n="play_info"> (Cliquez ici pour commencer à jouer)</span>
+            </button>
+
+            <button type="button" id="button-compte" data-i18n="account">
+                Mon Compte <br><span class="info-comment" data-i18n="account_info"> (Accédez à vos informations personnelles)</span>
+            </button>
+
+            <button type="button" id="logoutButton" data-i18n="deconnexion">Déconnexion</button>
+        </div>
+    </div>
+
+    <!-- Section de Jeu -->
+    <div class="content" id="choix-jeu">
+        <button onclick="showSection('choix')" id="button-retour" data-i18n="back-button">Retour</button>
+        <h1 data-i18n="game-title">Jouer</h1>
+        <p data-i18n="choose-game-mode">Choisis ton mode de jeu :</p>
+        <button onclick="showSection('choix-player')" id="button-player" data-i18n="mode-player-vs-player">PLAYER vs PLAYER</button>
+        <button onclick="showSection('choix-ia')" id="button-ia" data-i18n="mode-player-vs-ia">PLAYER vs IA</button>
+        <button onclick="showSection('choix-tournois')" id="button-tournois" data-i18n="mode-tournament">TOURNOIS</button>
+        <button onclick="showSection('choix-morpion')" id="button-morpion" data-i18n="mode-game-2">JEU 2</button>
+    </div>
+ 
+    <!-- Section de Player-Player -->
+    <div class="content" id="choix-player">
+        <button onclick="showSection('choix-jeu')" id="button-retour" data-i18n="back-button">Retour</button>
+        <h1 data-i18n="game-title">Jouer</h1>
+        <p data-i18n="player-player-goal">Le but du jeu est de dominer ton adversaire en envoyant la balle habilement derrière son palet pour marquer des points !</p>
+        <button onclick="showSection('choix-PONG')" id="button-commencer" data-i18n="start-button">Commencer</button>
+    </div>
+
+    <!-- Section de Player-IA -->
+    <div class="content" id="choix-ia">
+        <button onclick="showSection('choix-jeu')" id="button-retour" data-i18n="back-button">Retour</button>
+        <h1 data-i18n="vs-ia-title">vs IA</h1>
+        <p data-i18n="ia-description">L'IA se prépare à te démolir...</p>
+        <button onclick="showSection('choix-PONG')" id="button-startIa" data-i18n="start-button">Commencer</button>
+    </div>
+
+    <!-- Section de Tournois -->
+    <div class="content" id="choix-tournois">
+        <button onclick="showSection('choix-jeu')" id="button-retour" data-i18n="back-button">Retour</button>
+        <h1 data-i18n="tournament-title">Tournois</h1>
+
+        <!-- Choix des joueurs -->
+        <div id="player-selection">
+            <h2 data-i18n="choose-names-title">Choisissez vos noms</h2>
+            <label for="player1" data-i18n="player1-label">Player 1:</label>
+            <input type="text" id="player1" placeholder="Nom du joueur 1" data-i18n="player1-placeholder">
+            <label for="player2" data-i18n="player2-label">Player 2:</label>
+            <input type="text" id="player2" placeholder="Nom du joueur 2" data-i18n="player2-placeholder">
+            <label for="player3" data-i18n="player3-label">Player 3:</label>
+            <input type="text" id="player3" placeholder="Nom du joueur 3" data-i18n="player3-placeholder">
+            <label for="player4" data-i18n="player4-label">Player 4:</label>
+            <input type="text" id="player4" placeholder="Nom du joueur 4" data-i18n="player4-placeholder">
+            <button onclick="startTournament()" data-i18n="start-tournament-button">Lancer le tournoi</button>
+        </div>
+    </div>
+
+    <!-- Section pour afficher les matchs -->
+    <div class="content" id="match-display" style="display:none;">
+        <h1 data-i18n="ongoing-matches">Matchs en cours</h1>
+        
+        <div id="match1">
+            <h2 data-i18n="match1-title">Match 1</h2>
+            <p id="match1-players"></p>
+            <button id="start-match1" onclick="startPongGame(0)" data-i18n="play-button">Jouer</button>
+        </div>
+        
+        <div id="match2">
+            <h2 data-i18n="match2-title">Match 2</h2>
+            <p id="match2-players"></p>
+            <button id="start-match2" onclick="startPongGame(1)" data-i18n="play-button">Jouer</button>
+        </div>
+        
+        <div id="final">
+            <h2 data-i18n="final-title">Finale</h2>
+            <p id="final-players"></p>
+            <button id="start-final" onclick="startPongGame(2)" style="display:none;" data-i18n="play-button">Jouer</button>
+            <button onclick="goBackToMenu()" style="display: none;" id="return-button" data-i18n="return-button">Retour</button>
+        </div>
+    </div>
+
+    <!-- Section pour choisir de jouer au morpion -->
+    <div class="content container text-center" id="choix-morpion">
+        <button onclick="showSection('choix-jeu')" id="button-retour" data-i18n="back-button">Retour</button>
+        <h1 class="mb-3" data-i18n="morpion-title">Morpion</h1>
+        <p class="mb-4" data-i18n="morpion-description">Le but du morpion est d'aligner trois de tes symboles (croix ou cercle) horizontalement, verticalement ou en diagonale avant ton adversaire.</p>
+        <button onclick="startMorpion()" id="button-startMorpion" data-i18n="start-button">Commencer</button>
+    </div>
+    
+    <!-- Section du jeu (masquée au début) -->
+    <div class="container text-center" id="game-morpion" style="display:none;">
+        <div class="row justify-content-center">
+            <div class="col-4">
+                <div id="game-board" class="d-grid gap-2">
+                    <div class="row">
+                        <div class="col border p-4 cell" data-index="0"></div>
+                        <div class="col border p-4 cell" data-index="1"></div>
+                        <div class="col border p-4 cell" data-index="2"></div>
+                    </div>
+                    <div class="row">
+                        <div class="col border p-4 cell" data-index="3"></div>
+                        <div class="col border p-4 cell" data-index="4"></div>
+                        <div class="col border p-4 cell" data-index="5"></div>
+                    </div>
+                    <div class="row">
+                        <div class="col border p-4 cell" data-index="6"></div>
+                        <div class="col border p-4 cell" data-index="7"></div>
+                        <div class="col border p-4 cell" data-index="8"></div>
+                    </div>
+                </div>
+            </div>
+        </div>
+        <button onclick="showSection('choix-jeu')" id="morpion-retour" style="display: none;" data-i18n="back-button">Retour</button>
+    </div>
+
+    <!-- Section de Compte -->
+    <div class="content" id="choix-compte">
+        <button onclick="showSection('choix')" id="button-retour" data-i18n="back-button">Retour</button>
+        <h1 data-i18n="account-title">Mon Compte</h1>
+
+        <!-- Avatar -->
+        <div class="avatar-container">
+            <img id="avatar-image" src="textures/img_avatar.png" alt="Avatar" class="avatar">
+            <input type="file" id="avatar-upload" accept="image/*" data-i18n="upload-avatar-button">
+        </div>
+
+        <div class="infos-compte" id="first">Pseudonyme</div>
+
+        <!-- Formulaire -->
+        <form class="account-form">
+            <input type="text" id="username" placeholder="Pseudo" data-i18n="username-placeholder">
+            <button id="save-account" data-i18n="save-account-button">Sauvegarder</button>
+        </form>
+        
+         <!-- Historique des matchs -->
+        <div class="historique-section">
+            <h2 data-i18n="histo">Historique des matchs</h2>
+
+            <div class="historique-info-container">
+                <!-- Historique du jeu Pong -->
+                <div class="historique-info">
+                    <h3>Pong</h3>
+                    <p id="victory-pong"><span data-i18n="mvictory">Matchs gagnés :</span></p>
+                    <span id="match-win-pong" class="match-count">0</span> <!-- Le chiffre est maintenant en dessous -->
+                    <p id="lost-pong"><span data-i18n="mlost">Matchs perdus :</span></p>
+                    <span id="match-loss-pong" class="match-count">0</span> <!-- Le chiffre est maintenant en dessous -->
+                </div>
+
+                <div class="separation-line"></div> <!-- Ligne de séparation -->
+
+                <!-- Historique du jeu Morpion -->
+                <div class="historique-info">
+                    <h3>Morpion</h3>
+                    <p id="victory-morpion"><span data-i18n="mvictory">Matchs gagnés :</span></p>
+                    <span id="match-win-morpion" class="match-count">0</span> <!-- Le chiffre est maintenant en dessous -->
+                    <p id="lost-morpion"><span data-i18n="mlost">Matchs perdus :</span></p>
+                    <span id="match-loss-morpion" class="match-count">0</span> <!-- Le chiffre est maintenant en dessous -->
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Section PONG -->
+    <div class="gameplay" id="choix-PONG">
+        <div id="scoreBoard" data-i18n="score-display">Joueur 1 0 : 0 Joueur 2</div>
+    </div>
+
+    <script src="https://unpkg.com/three@0.128.0/build/three.min.js"></script>
+    <script src="script.js"></script>
+    <script src="pong.js"></script>
+    <script src="morpion.js"></script>
+</body>
+</html>
