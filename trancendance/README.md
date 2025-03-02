@@ -11,6 +11,8 @@ Une single page Application est une systeme de application web monopage qui est 
 
 ## Auteur
     Nom : Mohamed Ouahab
+    Nom : Otto Szwalberg 
+    nom : Michaël Bourgeois
     Contact : mohamed.ouahab1999@gmail.com
 
 
