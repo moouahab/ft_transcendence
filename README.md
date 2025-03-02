@@ -203,6 +203,8 @@ urlpatterns = [
 
 ## Auteur
     Nom : Mohamed Ouahab
+    Nom : Michaël Bourgeois
+    Nom : Otto Szwalberg
     Contact : mohamed.ouahab1999@gmail.com
 
 
